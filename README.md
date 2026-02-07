@@ -61,22 +61,6 @@ The mod creates a settings file in your savegame folder: `savegameX/npc_favor_se
 
 ---
 
-## ❓ FAQ / Troubleshooting
-
-**Q: I don't see any NPCs!**
-A: Ensure the mod is activated in your savegame. Try typing `npcStatus` in the console. If it says "not initialized," try traveling to a different part of the map or using `npcSpawn Test` to force-spawn one near you.
-
-**Q: Can I use this in multiplayer?**
-A: Yes! The mod is multiplayer-safe. However, favor states and relationships are currently tracked per-client, not synced between players.
-
-**Q: Will this mod conflict with X?**
-A: It only uses common game hooks. Conflicts are unlikely but possible with other major script mods that alter core game loops or the interaction system.
-
-**Q: The NPCs are just floating spheres!**
-A: Yes, in V1.0.0.0, detailed 3D models are a placeholder. The core systems are functional; visual upgrades are planned.
-
----
-
 ## 📝 License & Credits
 
 *   **Original Idea:** Lion2008
