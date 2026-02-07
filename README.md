@@ -51,19 +51,6 @@ The mod creates a settings file in your savegame folder: `savegameX/npc_favor_se
 
 ---
 
-## 🔧 For Modders / Contributors
-
-The code is structured into several key classes for easy understanding and extension:
-- `NPCSystem.lua` - The main coordinator.
-- `NPCAI.lua` - Handles NPC behavior and pathfinding.
-- `NPCRelationshipManager.lua` - Manages friendship levels and effects.
-- `NPCFavorSystem.lua` - The core of the favor/task system.
-- `NPCInteractionUI.lua` - Manages the player interaction dialog.
-
-Feel free to fork and experiment! Suggestions and clean pull requests are welcome.
-
----
-
 ## ❓ FAQ / Troubleshooting
 
 **Q: I don't see any NPCs!**
