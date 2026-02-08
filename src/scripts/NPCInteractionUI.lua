@@ -96,7 +96,7 @@ function NPCInteractionUI.new(npcSystem)
 end
 
 -- =========================================================
--- Update Loop (simplified — no dialog rendering)
+-- Update Loop (logic only — no rendering here)
 -- =========================================================
 
 function NPCInteractionUI:update(dt)
@@ -105,8 +105,23 @@ function NPCInteractionUI:update(dt)
     end
     self.animationTime = self.animationTime + dt
 
+    -- Update hint timer (no rendering)
+    if self.interactionHintVisible and self.interactionHintNPC then
+        self.interactionHintTimer = self.interactionHintTimer + dt
+    else
+        self.interactionHintTimer = 0
+    end
+end
+
+-- =========================================================
+-- Draw Loop (rendering only — called from FSBaseMission.draw)
+-- =========================================================
+-- FS25 requires all renderOverlay/renderText calls to happen
+-- inside draw callbacks, NOT update callbacks.
+
+function NPCInteractionUI:draw()
     -- World-space interaction hint above NPC
-    self:updateInteractionHint(dt)
+    self:drawInteractionHint()
 
     -- Corner HUD: active favors list
     if self.npcSystem.settings.showFavorList then
@@ -118,13 +133,10 @@ end
 -- World-Space Interaction Hint (above NPC head)
 -- =========================================================
 
-function NPCInteractionUI:updateInteractionHint(dt)
+function NPCInteractionUI:drawInteractionHint()
     if not self.interactionHintVisible or not self.interactionHintNPC then
-        self.interactionHintTimer = 0
         return
     end
-
-    self.interactionHintTimer = self.interactionHintTimer + dt
 
     local npc = self.interactionHintNPC
     local x, y, z = npc.position.x, npc.position.y + 2.5, npc.position.z

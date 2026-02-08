@@ -243,6 +243,16 @@ if FSBaseMission and FSBaseMission.update then
     end)
 end
 
+-- Hook draw for HUD rendering (renderOverlay/renderText are ONLY allowed in draw callbacks)
+if FSBaseMission and FSBaseMission.draw then
+    print("[NPC Favor] Hooking FSBaseMission.draw")
+    FSBaseMission.draw = Utils.appendedFunction(FSBaseMission.draw, function(mission)
+        if npcSystem then
+            npcSystem:draw()
+        end
+    end)
+end
+
 -- =========================================================
 -- E Key Input Binding (RVB Pattern from UsedPlus)
 -- =========================================================

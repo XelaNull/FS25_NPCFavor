@@ -725,7 +725,7 @@ function NPCSystem:update(dt)
         self.scheduler:update(dt)              -- Time tracking + daily events
         self.favorSystem:update(dt)            -- Favor timers + generation
         self.relationshipManager:update(dt)    -- Mood decay + behavior updates
-        self.interactionUI:update(dt)          -- Hint display + dialog (server-host only)
+        self.interactionUI:update(dt)          -- Timers + logic only (no rendering)
 
         -- Periodic sync to clients
         self.syncTimer = self.syncTimer + dt
@@ -744,12 +744,26 @@ function NPCSystem:update(dt)
         end
     else
         -- CLIENT: Display only, state comes from server sync events
-        self.interactionUI:update(dt)          -- UI rendering for this client
+        self.interactionUI:update(dt)          -- Timers + logic only (no rendering)
 
         -- NPC proximity checks use synced positions
         for _, npc in ipairs(self.activeNPCs) do
             self:checkPlayerProximity(npc)
         end
+    end
+end
+
+--- Draw loop, called every frame from FSBaseMission.draw.
+-- FS25 requires all renderOverlay/renderText calls to happen inside draw callbacks.
+-- This method handles all HUD rendering for the NPC system.
+function NPCSystem:draw()
+    if not self.settings.enabled or not self.isInitialized then
+        return
+    end
+
+    -- HUD rendering (interaction hints, favor list) — must be in draw callback
+    if self.interactionUI and self.interactionUI.draw then
+        self.interactionUI:draw()
     end
 end
 
