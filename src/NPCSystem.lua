@@ -420,6 +420,7 @@ function NPCSystem:initializeNPCData(npc, location, npcId)
     -- Store home building reference from spawn location
     npc.homeBuilding = (location and location.building) or nil
     npc.homeBuildingName = (location and location.buildingName) or "Unknown"
+    npc.ownerFarmId = (location and location.ownerFarmId) or 0
 
     -- Guard against nil location for field lookup
     local locX = (location and location.x) or 0
@@ -481,6 +482,7 @@ function NPCSystem:findNPCSpawnLocations()
                             table.insert(buildings, {
                                 x = x, y = y, z = z,
                                 placeable = placeable,
+                                ownerFarmId = placeable.ownerFarmId or 0,
                                 name = (placeable.getName and placeable:getName()) or "Building"
                             })
                         end
@@ -516,6 +518,7 @@ function NPCSystem:findNPCSpawnLocations()
             z = spawnZ,
             building = building,
             buildingName = building.name,
+            ownerFarmId = building.ownerFarmId or 0,
             isPredefined = true,
             isResidential = false
         })
@@ -1098,9 +1101,9 @@ function NPCSystem:consoleCommandList()
     local gameTime = self:getCurrentGameTime()
     local list = string.format("=== Active NPCs (%d/%d) | Updates: %d ===\n",
         self.npcCount, self.settings.maxNPCs, self.updateCounter)
-    list = list .. string.format("%-4s %-18s %-11s %-8s %-8s %5s %3s %s\n",
-        "#", "Name", "Personality", "Action", "AI", "Dist", "Rel", "Updated")
-    list = list .. string.rep("-", 82) .. "\n"
+    list = list .. string.format("%-4s %-18s %-11s %-8s %-8s %5s %3s %4s %s\n",
+        "#", "Name", "Personality", "Action", "AI", "Dist", "Rel", "Farm", "Updated")
+    list = list .. string.rep("-", 90) .. "\n"
 
     for i, npc in ipairs(self.activeNPCs) do
         if npc.isActive then
@@ -1123,7 +1126,7 @@ function NPCSystem:consoleCommandList()
                 end
             end
 
-            list = list .. string.format("%-4d %-18s %-11s %-8s %-8s %4sm %3d %s\n",
+            list = list .. string.format("%-4d %-18s %-11s %-8s %-8s %4sm %3d %4s %s\n",
                 i,
                 (npc.name or "?"):sub(1, 18),
                 (npc.personality or "?"):sub(1, 11),
@@ -1131,6 +1134,7 @@ function NPCSystem:consoleCommandList()
                 (npc.aiState or "?"):sub(1, 8),
                 dist,
                 npc.relationship or 0,
+                tostring(npc.ownerFarmId or "?"),
                 upd)
         end
     end
@@ -1147,6 +1151,9 @@ function NPCSystem:consoleCommandList()
             end
             if npc.homeBuildingName then
                 list = list .. string.format("  bldg=%s", npc.homeBuildingName)
+            end
+            if npc.ownerFarmId and npc.ownerFarmId > 0 then
+                list = list .. string.format("  farm#%d", npc.ownerFarmId)
             end
             list = list .. "\n"
         end

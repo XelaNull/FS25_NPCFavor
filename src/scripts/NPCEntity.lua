@@ -4,7 +4,7 @@
 -- [x] 3D model loading via g_i3DManager (shared i3d, clone, delete)
 -- [x] Per-NPC color tinting via colorScale shader parameter
 -- [x] Debug node fallback when models are unavailable (text above head)
--- [x] Minimap icons via MapIcon API with AI-state-based colors
+-- [x] Map hotspots via MapHotspot API (replaces MapIcon which was unavailable)
 -- [x] LOD-based batch updates (closer NPCs update more frequently)
 -- [x] Visibility culling based on player distance (maxVisibleDistance)
 -- [x] Deterministic appearance generation (scale, color) via appearanceSeed
@@ -74,7 +74,7 @@
 --   - 3D model loading via g_i3DManager (shared i3d, clone, delete)
 --   - Per-NPC color tinting via colorScale shader parameter
 --   - Debug node fallback when models are unavailable
---   - Minimap icons via MapIcon API
+--   - Map hotspots via FS25 MapHotspot API
 --   - LOD-based batch updates (closer NPCs update more frequently)
 --   - Visibility culling based on player distance
 --
@@ -176,7 +176,7 @@ function NPCEntity:createNPCEntity(npc)
         updatePriority = 1,
         debugNode = nil,
         debugText = nil,
-        mapIcon = nil
+        mapHotspot = nil
     }
 
     -- Try to load 3D model
@@ -195,7 +195,7 @@ function NPCEntity:createNPCEntity(npc)
     self.npcEntities[npc.id] = entity
     npc.entityId = entityId
 
-    self:createMapIcon(entity, npc)
+    self:createMapHotspot(entity, npc)
 
     -- Restore RNG to non-deterministic state (prevents other systems from
     -- getting the same sequence of random numbers for every NPC)
@@ -322,8 +322,8 @@ function NPCEntity:updateNPCEntity(npc, dt)
     self:updateAnimation(entity, npc)
     self:updateVisibility(entity)
 
-    -- Update map icon position and color
-    self:updateMapIcon(entity, npc)
+    -- Update map hotspot position
+    self:updateMapHotspot(entity, npc)
 
     -- Update 3D model node position/rotation
     if entity.node then
@@ -497,7 +497,7 @@ function NPCEntity:removeNPCEntity(npc)
     
     if entity.debugNode then pcall(function() delete(entity.debugNode) end) end
     if entity.node then pcall(function() delete(entity.node) end) end
-    self:removeMapIcon(entity)
+    self:removeMapHotspot(entity)
     
     self.npcEntities[npc.id] = nil
     self.lastBatchIndex = 0
@@ -515,7 +515,7 @@ function NPCEntity:setEntityPosition(npcId, x, y, z)
         entity.needsUpdate = true
         if entity.node then pcall(function() setTranslation(entity.node, x, y, z) end) end
         if entity.debugNode then pcall(function() setTranslation(entity.debugNode, x, y, z) end) end
-        if entity.mapIcon then pcall(function() entity.mapIcon:setWorldPosition(x, y, z) end) end
+        if entity.mapHotspot and entity.mapHotspot.setWorldPosition then pcall(function() entity.mapHotspot:setWorldPosition(x, z) end) end
     end
 end
 
@@ -572,65 +572,74 @@ function NPCEntity:cleanupStaleEntities()
 end
 
 -- =========================================================
--- Map Icon Functions
+-- Map Hotspot Functions (FS25 MapHotspot API)
 -- =========================================================
+-- FS25 uses MapHotspot (not MapIcon) for map markers.
+-- g_currentMission:addMapHotspot() / :removeMapHotspot()
 
-function NPCEntity:createMapIcon(entity, npc)
-    if not entity or entity.mapIcon then return end
+function NPCEntity:createMapHotspot(entity, npc)
+    if not entity or entity.mapHotspot then return end
+    if not g_currentMission or not g_currentMission.addMapHotspot then return end
+    if not MapHotspot then return end
 
-    -- MapIcon may not exist in all FS25 versions; fail silently
     local ok = pcall(function()
-        local parentNode = entity.node or getRootNode()
-        local iconFilename = "data/shared/vehicle/hud/vehicleMapIcon.dds"
-        local iconSize = 0.02
+        local name = (npc and npc.name) or "NPC"
+        local hotspot = MapHotspot.new()
 
-        entity.mapIcon = MapIcon.new(iconFilename, parentNode, nil, iconSize, false, false)
-
-        if npc and npc.name then
-            entity.mapIcon:setName(npc.name)
+        -- Set display name and category
+        if hotspot.setName then
+            hotspot:setName(name)
+        end
+        if hotspot.setCategory then
+            -- CATEGORY_AI or CATEGORY_OTHER depending on FS25 version
+            local category = MapHotspot.CATEGORY_AI or MapHotspot.CATEGORY_OTHER or 1
+            hotspot:setCategory(category)
         end
 
-        if g_currentMission then
-            g_currentMission:addMapIcon(entity.mapIcon)
+        -- Set initial position
+        if hotspot.setWorldPosition then
+            hotspot:setWorldPosition(entity.position.x, entity.position.z)
         end
+
+        -- Link to scene node for automatic position tracking (if available)
+        if hotspot.setLinkedNode and entity.node then
+            hotspot:setLinkedNode(entity.node)
+        end
+
+        g_currentMission:addMapHotspot(hotspot)
+        entity.mapHotspot = hotspot
     end)
 
     if not ok then
-        entity.mapIcon = nil
+        entity.mapHotspot = nil
+        if self.npcSystem and self.npcSystem.settings and self.npcSystem.settings.debugMode then
+            print("[NPCEntity] MapHotspot creation failed for " .. tostring(npc and npc.name))
+        end
     end
 end
 
-function NPCEntity:removeMapIcon(entity)
-    if entity and entity.mapIcon then
+function NPCEntity:removeMapHotspot(entity)
+    if entity and entity.mapHotspot then
         pcall(function()
-            if g_currentMission then g_currentMission:removeMapIcon(entity.mapIcon) end
-            entity.mapIcon:delete()
+            if g_currentMission and g_currentMission.removeMapHotspot then
+                g_currentMission:removeMapHotspot(entity.mapHotspot)
+            end
+            if entity.mapHotspot.delete then
+                entity.mapHotspot:delete()
+            end
         end)
-        entity.mapIcon = nil
+        entity.mapHotspot = nil
     end
 end
 
-function NPCEntity:updateMapIcon(entity, npc)
-    if not entity or not entity.mapIcon then return end
-    
-    local pos = entity.position
-    pcall(function()
-        entity.mapIcon:setWorldPosition(pos.x, pos.y, pos.z)
-    end)
-    
-    if npc then
-        local color = self:getColorForAIState(npc)
-        pcall(function() entity.mapIcon:setColor(color.r, color.g, color.b, 1) end)
+function NPCEntity:updateMapHotspot(entity, npc)
+    if not entity or not entity.mapHotspot then return end
+
+    -- If hotspot is linked to a node, position updates automatically.
+    -- Otherwise, update manually.
+    if not entity.node and entity.mapHotspot.setWorldPosition then
+        pcall(function()
+            entity.mapHotspot:setWorldPosition(entity.position.x, entity.position.z)
+        end)
     end
-    
-    if not g_currentMission or not g_currentMission.player then return end
-    local playerX, playerY, playerZ = 0,0,0
-    pcall(function() playerX, playerY, playerZ = getWorldTranslation(g_currentMission.player.rootNode) end)
-
-    local dx = playerX - pos.x
-    local dy = playerY - pos.y
-    local dz = playerZ - pos.z
-    local distance = math.sqrt(dx*dx + dy*dy + dz*dz)
-
-    entity.mapIcon:setVisible(distance <= self.maxVisibleDistance)
 end
