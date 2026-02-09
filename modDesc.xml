@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="105">
     <author>TisonK</author>
-    <version>1.2.1.0</version>
+    <version>1.2.2.0</version>
     <modName>FS25_NPCFavor</modName>
     <title>
         <en>NPC Favor - Living Neighborhood</en>
@@ -1579,14 +1579,155 @@
             <uk>Поговорити з %s</uk>
             <ru>Поговорить с %s</ru>
         </text>
+
+        <!-- Favor Management Dialog -->
+        <text name="npc_favor_management_title">
+            <en>Active Favors (%d)</en>
+            <de>Aktive Gefallen (%d)</de>
+            <fr>Faveurs actives (%d)</fr>
+            <pl>Aktywne przysługi (%d)</pl>
+            <es>Favores activos (%d)</es>
+            <it>Favori attivi (%d)</it>
+            <cz>Aktivní laskavosti (%d)</cz>
+            <br>Favores ativos (%d)</br>
+            <uk>Активні послуги (%d)</uk>
+            <ru>Активные услуги (%d)</ru>
+        </text>
+
+        <text name="npc_favor_management_footer">
+            <en>Cancel favor to reduce relationship by 10  |  Complete to finish manually</en>
+            <de>Gefallen abbrechen reduziert Beziehung um 10  |  Abschließen zum manuellen Beenden</de>
+            <fr>Annuler la faveur réduit la relation de 10  |  Terminer pour finir manuellement</fr>
+            <pl>Anulowanie przysługi zmniejsza relację o 10  |  Ukończ, aby zakończyć ręcznie</pl>
+            <es>Cancelar favor reduce la relación en 10  |  Completar para terminar manualmente</es>
+            <it>Annullare il favore riduce la relazione di 10  |  Completa per finire manualmente</it>
+            <cz>Zrušení laskavosti sníží vztah o 10  |  Dokončit pro ruční ukončení</cz>
+            <br>Cancelar favor reduz relacionamento em 10  |  Complete para terminar manualmente</br>
+            <uk>Скасування послуги зменшує відносини на 10  |  Завершити для ручного закінчення</uk>
+            <ru>Отмена услуги снижает отношения на 10  |  Завершить для ручного окончания</ru>
+        </text>
+
+        <!-- Button labels -->
+        <text name="button_view">
+            <en>View</en>
+            <de>Ansehen</de>
+            <fr>Voir</fr>
+            <pl>Zobacz</pl>
+            <es>Ver</es>
+            <it>Vedi</it>
+            <cz>Zobrazit</cz>
+            <br>Ver</br>
+            <uk>Переглянути</uk>
+            <ru>Просмотр</ru>
+        </text>
+
+        <text name="button_cancel">
+            <en>Cancel</en>
+            <de>Abbrechen</de>
+            <fr>Annuler</fr>
+            <pl>Anuluj</pl>
+            <es>Cancelar</es>
+            <it>Annulla</it>
+            <cz>Zrušit</cz>
+            <br>Cancelar</br>
+            <uk>Скасувати</uk>
+            <ru>Отменить</ru>
+        </text>
+
+        <text name="button_goto">
+            <en>Go To</en>
+            <de>Gehe zu</de>
+            <fr>Aller à</fr>
+            <pl>Idź do</pl>
+            <es>Ir a</es>
+            <it>Vai a</it>
+            <cz>Jít na</cz>
+            <br>Ir para</br>
+            <uk>Перейти до</uk>
+            <ru>Перейти к</ru>
+        </text>
+
+        <text name="button_complete">
+            <en>Complete</en>
+            <de>Abschließen</de>
+            <fr>Terminer</fr>
+            <pl>Ukończ</pl>
+            <es>Completar</es>
+            <it>Completa</it>
+            <cz>Dokončit</cz>
+            <br>Completar</br>
+            <uk>Завершити</uk>
+            <ru>Завершить</ru>
+        </text>
+
+        <text name="button_refresh">
+            <en>Refresh</en>
+            <de>Aktualisieren</de>
+            <fr>Actualiser</fr>
+            <pl>Odśwież</pl>
+            <es>Actualizar</es>
+            <it>Aggiorna</it>
+            <cz>Obnovit</cz>
+            <br>Atualizar</br>
+            <uk>Оновити</uk>
+            <ru>Обновить</ru>
+        </text>
+
+        <text name="button_close">
+            <en>Close</en>
+            <de>Schließen</de>
+            <fr>Fermer</fr>
+            <pl>Zamknij</pl>
+            <es>Cerrar</es>
+            <it>Chiudi</it>
+            <cz>Zavřít</cz>
+            <br>Fechar</br>
+            <uk>Закрити</uk>
+            <ru>Закрыть</ru>
+        </text>
+
+        <!-- Input action labels -->
+        <text name="input_FAVOR_MENU">
+            <en>Favor Menu</en>
+            <de>Gefallen-Menü</de>
+            <fr>Menu des faveurs</fr>
+            <pl>Menu przysług</pl>
+            <es>Menú de favores</es>
+            <it>Menu favori</it>
+            <cz>Menu laskavostí</cz>
+            <br>Menu de favores</br>
+            <uk>Меню послуг</uk>
+            <ru>Меню услуг</ru>
+        </text>
+
+        <text name="input_NPC_LIST">
+            <en>NPC List</en>
+            <de>NPC-Liste</de>
+            <fr>Liste PNJ</fr>
+            <pl>Lista NPC</pl>
+            <es>Lista NPC</es>
+            <it>Lista NPC</it>
+            <cz>Seznam NPC</cz>
+            <br>Lista NPC</br>
+            <uk>Список NPC</uk>
+            <ru>Список NPC</ru>
+        </text>
     </l10n>
 
     <actions>
         <action name="NPC_INTERACT" />
+        <action name="FAVOR_MENU" />
+        <action name="NPC_LIST" />
     </actions>
     <inputBinding>
         <actionBinding action="NPC_INTERACT">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_e" />
+        </actionBinding>
+        <actionBinding action="FAVOR_MENU">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_F6" />
+        </actionBinding>
+        <actionBinding action="NPC_LIST">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_F7" />
         </actionBinding>
     </inputBinding>
 </modDesc>
