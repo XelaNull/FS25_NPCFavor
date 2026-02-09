@@ -1,4 +1,36 @@
 -- =========================================================
+-- TODO / FUTURE VISION
+-- =========================================================
+-- TIME CONVERSION:
+-- [x] Milliseconds to hours/minutes/seconds (msToHMS)
+-- [x] Milliseconds to days/hours/minutes/seconds (msToDHMS)
+-- [x] Long and short time formatting
+-- [x] Time comparison helpers (isSameDay, daysBetween, hoursBetween)
+-- [ ] Relative time formatting ("2 hours ago", "yesterday")
+-- [ ] Localized time format strings (12h vs 24h based on language)
+--
+-- GAME TIME:
+-- [x] Current game hour, minute, day, month, year accessors
+-- [x] Formatted game time string output
+-- [x] Time prediction (predictFutureTime, getTimeUntil)
+-- [ ] Game time speed multiplier awareness for accurate real-time estimates
+-- [ ] Alarm/timer system for scheduling NPC events at specific game times
+--
+-- SEASONS:
+-- [x] Growing season detection (April-October)
+-- [x] Winter detection (December-February)
+-- [x] Full four-season classification (spring, summer, autumn, winter)
+-- [ ] Southern hemisphere season support for map variety
+-- [ ] Weather-aware time checks (rainy day behavior, etc.)
+--
+-- TIME OF DAY:
+-- [x] Morning, afternoon, evening, night classification
+-- [x] getTimeOfDay returns string label for current period
+-- [x] Dawn/dusk transition periods for NPC schedule blending
+-- [ ] Configurable time-of-day thresholds per NPC personality
+-- =========================================================
+
+-- =========================================================
 -- Time Helper Utilities
 -- =========================================================
 -- Time conversion and formatting utilities
@@ -26,54 +58,14 @@ function TimeHelper.msToDHMS(ms)
     return days, hours, minutes, seconds
 end
 
--- Format time as string
-function TimeHelper.formatTime(ms, includeDays)
-    if includeDays then
-        local days, hours, minutes, seconds = TimeHelper.msToDHMS(ms)
-        if days > 0 then
-            return string.format("%dd %02dh %02dm", days, hours, minutes)
-        else
-            return string.format("%02dh %02dm", hours, minutes)
-        end
-    else
-        local hours, minutes, seconds = TimeHelper.msToHMS(ms)
-        if hours > 0 then
-            return string.format("%02d:%02d:%02d", hours, minutes, seconds)
-        else
-            return string.format("%02d:%02d", minutes, seconds)
-        end
-    end
-end
-
-function TimeHelper.formatShortTime(ms)
-    local totalSeconds = ms / 1000
-    
-    if totalSeconds < 60 then
-        return string.format("%.0fs", totalSeconds)
-    elseif totalSeconds < 3600 then
-        local minutes = totalSeconds / 60
-        return string.format("%.0fm", minutes)
-    else
-        local hours = totalSeconds / 3600
-        if hours < 24 then
-            return string.format("%.1fh", hours)
-        else
-            local days = hours / 24
-            return string.format("%.1fd", days)
-        end
-    end
-end
-
--- Game time utilities
-function TimeHelper.getGameTime()
-    if g_currentMission and g_currentMission.environment then
-        return g_currentMission.environment.currentDayTime or 0
-    end
-    return 0
-end
 
 function TimeHelper.getGameHour()
     if g_currentMission and g_currentMission.environment then
+        -- Derive from dayTime (ms since midnight) for reliability
+        local dayTime = g_currentMission.environment.dayTime
+        if dayTime then
+            return math.floor(dayTime / 3600000)
+        end
         return g_currentMission.environment.currentHour or 12
     end
     return 12
@@ -81,6 +73,11 @@ end
 
 function TimeHelper.getGameMinute()
     if g_currentMission and g_currentMission.environment then
+        -- Derive from dayTime (ms since midnight) for reliability
+        local dayTime = g_currentMission.environment.dayTime
+        if dayTime then
+            return math.floor((dayTime % 3600000) / 60000)
+        end
         return g_currentMission.environment.currentMinute or 0
     end
     return 0
@@ -107,16 +104,6 @@ function TimeHelper.getGameYear()
     return 1
 end
 
-function TimeHelper.formatGameTime()
-    local hour = TimeHelper.getGameHour()
-    local minute = TimeHelper.getGameMinute()
-    local day = TimeHelper.getGameDay()
-    local month = TimeHelper.getGameMonth()
-    local year = TimeHelper.getGameYear()
-    
-    return string.format("Year %d, Month %d, Day %d - %02d:%02d", 
-        year, month, day, math.floor(hour), math.floor(minute))
-end
 
 -- Time comparison
 function TimeHelper.isSameDay(time1, time2)
@@ -166,26 +153,6 @@ function TimeHelper.getTimeUntil(targetTime)
 end
 
 -- Seasonal time checks
-function TimeHelper.isGrowingSeason(month)
-    -- Northern hemisphere growing season approximation
-    local growingMonths = {4, 5, 6, 7, 8, 9, 10} -- April to October
-    for _, m in ipairs(growingMonths) do
-        if month == m then
-            return true
-        end
-    end
-    return false
-end
-
-function TimeHelper.isWinter(month)
-    local winterMonths = {12, 1, 2} -- December, January, February
-    for _, m in ipairs(winterMonths) do
-        if month == m then
-            return true
-        end
-    end
-    return false
-end
 
 -- Time of day checks
 function TimeHelper.isMorning(hour)
@@ -200,9 +167,6 @@ function TimeHelper.isEvening(hour)
     return hour >= 18 and hour < 22
 end
 
-function TimeHelper.isNight(hour)
-    return hour >= 22 or hour < 6
-end
 
 function TimeHelper.getTimeOfDay(hour)
     if TimeHelper.isMorning(hour) then
@@ -215,3 +179,18 @@ function TimeHelper.getTimeOfDay(hour)
         return "night"
     end
 end
+
+--- Check if it's dawn (sunrise transition period).
+-- @param hour  Game hour (0-23)
+-- @return boolean  True if during dawn (5:00-7:00)
+function TimeHelper.isDawn(hour)
+    return hour >= 5 and hour < 7
+end
+
+--- Check if it's dusk (sunset transition period).
+-- @param hour  Game hour (0-23)
+-- @return boolean  True if during dusk (19:00-21:00)
+function TimeHelper.isDusk(hour)
+    return hour >= 19 and hour < 21
+end
+

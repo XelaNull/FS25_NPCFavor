@@ -1,4 +1,29 @@
 -- =========================================================
+-- TODO / FUTURE VISION
+-- =========================================================
+-- SETTINGS VALUES & DEFAULTS:
+-- [x] Core settings (enabled, maxNPCs, work hours, spawn distance)
+-- [x] Display settings (names, notifications, relationship bars, paths)
+-- [x] Gameplay settings (favors, gifts, relationships, decay)
+-- [x] Difficulty multipliers (gain, loss, reward, penalty)
+-- [x] AI behavior tuning (activity level, movement, breaks, social)
+-- [x] Debug toggles (paths, spawn points, AI decisions, log to file)
+-- [x] Sound settings (effects, voice lines, UI sounds, notifications)
+-- [x] Performance settings (update frequency, render/update distance, batching)
+-- [x] Multiplayer sync flags (NPCs, relationships, favors)
+-- [x] Full XML save/load with per-field read/write
+-- [x] Validation with clamping for all numeric ranges
+-- [x] Reset to defaults with optional immediate save
+-- [x] Helper methods (difficulty multiplier, work time check, NPC culling)
+-- FUTURE ENHANCEMENTS:
+-- [ ] Per-NPC setting overrides (custom work hours for specific NPCs)
+-- [ ] Settings profiles (presets: "Casual", "Realistic", "Performance")
+-- [ ] Settings change event system to notify listeners on value change
+-- [ ] Import/export settings to share between savegames
+-- [ ] Settings versioning with automatic migration on mod update
+-- =========================================================
+
+-- =========================================================
 -- FS25 NPC Favor Mod - Settings Data (NPCSettings)
 -- =========================================================
 
@@ -17,7 +42,7 @@ function NPCSettings:resetToDefaults(saveImmediately)
 
     -- Core
     self.enabled = true
-    self.maxNPCs = 8
+    self.maxNPCs = 10
     self.npcWorkStart = 8
     self.npcWorkEnd = 17
     self.favorFrequency = 3
@@ -39,6 +64,7 @@ function NPCSettings:resetToDefaults(saveImmediately)
     self.npcHelpPlayer = true
     self.npcSocialize = true
     self.npcDriveVehicles = true
+    self.npcVehicleMode = "hybrid"      -- "hybrid" (static prop, real when working), "realistic" (always real), "visual" (props only)
     self.allowMultipleFavors = true
     self.maxActiveFavors = 5
     self.favorTimeLimit = true
@@ -139,6 +165,7 @@ function NPCSettings:load()
     self.npcHelpPlayer = getBool("npcHelpPlayer", self.npcHelpPlayer)
     self.npcSocialize = getBool("npcSocialize", self.npcSocialize)
     self.npcDriveVehicles = getBool("npcDriveVehicles", self.npcDriveVehicles)
+    self.npcVehicleMode = getString("npcVehicleMode", self.npcVehicleMode)
     self.allowMultipleFavors = getBool("allowMultipleFavors", self.allowMultipleFavors)
     self.maxActiveFavors = getInt("maxActiveFavors", self.maxActiveFavors)
     self.favorTimeLimit = getBool("favorTimeLimit", self.favorTimeLimit)
@@ -229,6 +256,7 @@ function NPCSettings:save()
     setBool("npcHelpPlayer", self.npcHelpPlayer)
     setBool("npcSocialize", self.npcSocialize)
     setBool("npcDriveVehicles", self.npcDriveVehicles)
+    setString("npcVehicleMode", self.npcVehicleMode)
     setBool("allowMultipleFavors", self.allowMultipleFavors)
     setInt("maxActiveFavors", self.maxActiveFavors)
     setBool("favorTimeLimit", self.favorTimeLimit)
@@ -280,7 +308,7 @@ function NPCSettings:save()
 end
 
 function NPCSettings:validateSettings()
-    self.maxNPCs = math.max(1, math.min(50, self.maxNPCs))
+    self.maxNPCs = math.max(1, math.min(16, self.maxNPCs))
     self.npcWorkStart = math.max(0, math.min(23, self.npcWorkStart))
     self.npcWorkEnd = math.max(0, math.min(23, self.npcWorkEnd))
     self.favorFrequency = math.max(1, math.min(30, self.favorFrequency))
@@ -318,6 +346,11 @@ function NPCSettings:validateSettings()
         self.updateFrequency = "normal"
     end
 
+    local validVehicleModes = {"realistic","visual","hybrid"}
+    if not Utils.containsValue(validVehicleModes, self.npcVehicleMode) then
+        self.npcVehicleMode = "hybrid"
+    end
+
     self.enabled = not not self.enabled
     self.showNames = not not self.showNames
     self.showNotifications = not not self.showNotifications
@@ -325,53 +358,3 @@ function NPCSettings:validateSettings()
     self.enableFavors = not not self.enableFavors
 end
 
--- Helpers
-function NPCSettings:getDifficultyMultiplier()
-    local multipliers = {easy=0.7, normal=1.0, hard=1.5}
-    return multipliers[self.favorDifficulty] or 1.0
-end
-
-function NPCSettings:getActivityLevelMultiplier()
-    local multipliers = {low=0.5, normal=1.0, high=1.5}
-    return multipliers[self.npcActivityLevel] or 1.0
-end
-
-function NPCSettings:getUpdateFrequencyValue()
-    local frequencies = {low=0.5, normal=1.0, high=2.0}
-    return frequencies[self.updateFrequency] or 1.0
-end
-
-function NPCSettings:isWorkTime(hour)
-    return hour >= self.npcWorkStart and hour < self.npcWorkEnd
-end
-
-function NPCSettings:getWorkDuration()
-    local duration = self.npcWorkEnd - self.npcWorkStart
-    if duration < 0 then duration = duration + 24 end
-    return duration
-end
-
-function NPCSettings:shouldUpdateNPC(npc, distanceToPlayer)
-    if distanceToPlayer <= self.npcUpdateDistance then return true end
-    if distanceToPlayer <= self.npcUpdateDistance * 2 then
-        return math.random() < 0.1
-    end
-    return false
-end
-
-function NPCSettings:shouldRenderNPC(npc, distanceToPlayer)
-    return distanceToPlayer <= self.npcRenderDistance
-end
-
-function NPCSettings:getEffectiveMaxNPCs()
-    local baseMax = self.maxNPCs
-    if self.updateFrequency == "low" then return math.floor(baseMax * 0.7)
-    elseif self.updateFrequency == "high" then return math.floor(baseMax * 1.3) end
-    return baseMax
-end
-
-function NPCSettings:applyPerformanceSettings()
-    if not g_NPCSystem or not g_NPCSystem.entityManager then return end
-    g_NPCSystem.entityManager.maxVisibleDistance = self.npcRenderDistance
-    g_NPCSystem.entityManager.updateBatchSize = self.maxUpdatesPerFrame
-end

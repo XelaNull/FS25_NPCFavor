@@ -1,4 +1,33 @@
 -- =========================================================
+-- TODO / FUTURE VISION
+-- =========================================================
+-- FAVOR TYPES:
+-- [x] Seven favor types across vehicle, fieldwork, transport, repair, delivery, financial, security
+-- [x] Difficulty-scaled rewards and penalties per favor type
+-- [x] Equipment and relationship requirements for favor eligibility
+-- [x] Seasonal favors (snow clearing in winter, irrigation in summer)
+-- [ ] Chain favors that unlock follow-up quests from the same NPC
+-- [ ] Community favors involving multiple NPCs cooperating
+--
+-- GENERATION & TRACKING:
+-- [x] Weighted random NPC selection based on relationship and personality
+-- [x] Time-of-day probability scaling for favor generation
+-- [x] Multi-step favor progression with location-based checkpoints
+-- [x] Notification queue system with cooldown between messages
+-- [ ] Favor journal UI showing active, completed, and failed history
+-- [ ] Map markers for favor objectives and delivery destinations
+--
+-- COMPLETION & REWARDS:
+-- [x] Favor completion with relationship and money rewards
+-- [x] Failure and abandonment penalty system with reputation impact
+-- [x] Statistics tracking (fastest completion, total earnings, etc.)
+-- [x] Save/restore of active favors across game sessions
+-- [x] Bonus rewards for completing favors ahead of deadline
+-- [ ] Reputation system affecting all NPC interactions globally
+-- [ ] Tiered reward multipliers for consecutive favor streaks
+-- =========================================================
+
+-- =========================================================
 -- FS25 NPC Favor Mod - Favor System
 -- =========================================================
 -- Manages favor requests, tracking, and completion
@@ -196,7 +225,9 @@ function NPCFavorSystem:tryGenerateFavorRequest(dt)
     -- Reduce probability if we have many active favors
     local favorFactor = math.max(0.1, 1.0 - (activeFavorCount / maxActiveFavors))
     
-    local probability = baseProbability * timeFactor * favorFactor * (dt / 1000) -- Adjust for dt
+    -- Note: dt is already in seconds (NPCSystem divides by 1000)
+    -- This function gates on a 10-second cooldown (line 170), so no dt scaling needed
+    local probability = baseProbability * timeFactor * favorFactor
     
     if math.random() < probability then
         self:generateFavorRequest()
@@ -260,49 +291,56 @@ function NPCFavorSystem:generateTaskData(favorType, npc)
 end
 
 function NPCFavorSystem:findNearestSellPoint(x, z)
-    -- Find the nearest sell point
+    -- Find the nearest sell/unloading point using FS25 storageSystem API
     if not g_currentMission or not g_currentMission.storageSystem then
         return {x = x + 500, y = 0, z = z + 500} -- Default far location
     end
-    
-    -- This is a simplified version - in reality, you'd query the game's sell points
+
     local sellPoints = {}
-    
-    -- Try to find sell points in the mission
-    if g_currentMission.sellingStations then
-        for _, station in pairs(g_currentMission.sellingStations) do
-            if station and station.nodeId then
-                local sx, sy, sz = getWorldTranslation(station.nodeId)
-                if sx then
-                    table.insert(sellPoints, {
-                        x = sx,
-                        y = sy,
-                        z = sz,
-                        name = station.name or "Sell Point"
-                    })
+
+    -- Use FS25's unloading stations API (sell points are unloading stations)
+    local ok, unloadingStations = pcall(function()
+        return g_currentMission.storageSystem:getUnloadingStations()
+    end)
+
+    if ok and unloadingStations then
+        for _, station in pairs(unloadingStations) do
+            if station then
+                local nodeId = station.rootNode or station.nodeId
+                if nodeId then
+                    local okPos, sx, sy, sz = pcall(getWorldTranslation, nodeId)
+                    if okPos and sx then
+                        table.insert(sellPoints, {
+                            x = sx,
+                            y = sy,
+                            z = sz,
+                            name = station:getName() or "Sell Point"
+                        })
+                    end
                 end
             end
         end
     end
-    
+
     -- Find nearest
     local nearest = nil
     local nearestDist = math.huge
-    
+
     for _, point in ipairs(sellPoints) do
-        local dist = VectorHelper.distance3D(x, 0, z, point.x, 0, point.z)
+        local dist = VectorHelper.distance2D(x, z, point.x, point.z)
         if dist < nearestDist then
             nearestDist = dist
             nearest = point
         end
     end
-    
+
     if nearest then
         return nearest
     end
-    
-    -- Fallback
-    return {x = x + 500, y = 0, z = z + 500}
+
+    -- Fallback: random direction from NPC home
+    local angle = math.random() * math.pi * 2
+    return {x = x + math.cos(angle) * 500, y = 0, z = z + math.sin(angle) * 500}
 end
 
 function NPCFavorSystem:generateFavorRequest()
@@ -396,7 +434,25 @@ function NPCFavorSystem:generateFavorRequest()
         elseif selectedNPC.personality == "greedy" and favorType.difficulty >= 2 then
             weight = weight * 1.5
         end
-        
+
+        -- 4j: Seasonal favor weighting
+        local season = nil
+        if self.npcSystem.scheduler and self.npcSystem.scheduler.getCurrentSeason then
+            season = self.npcSystem.scheduler:getCurrentSeason()
+        end
+        if season then
+            local category = favorType.category or ""
+            if season == "autumn" and (category == "harvest" or category == "delivery" or category == "field") then
+                weight = weight * 2.0  -- Harvest season: more field/delivery requests
+            elseif season == "spring" and (category == "field" or category == "planting") then
+                weight = weight * 1.8  -- Spring: more planting/field prep requests
+            elseif season == "winter" and (category == "repair" or category == "maintenance" or category == "social") then
+                weight = weight * 1.5  -- Winter: more indoor/repair requests
+            elseif season == "summer" and (category == "delivery" or category == "social") then
+                weight = weight * 1.3  -- Summer: more social/delivery requests
+            end
+        end
+
         favorWeights[favorType.id] = weight
     end
     
@@ -806,29 +862,6 @@ function NPCFavorSystem:processNotifications(dt)
     end
 end
 
-function NPCFavorSystem:startFavor(favorId)
-    local favor = self:getFavorById(favorId)
-    if not favor then
-        return false
-    end
-    
-    if favor.status == "pending" then
-        favor.status = "active"
-        favor.startTime = g_currentMission.time
-        
-        self:queueNotification(
-            "Favor Started",
-            string.format("You've accepted to help %s with: %s", 
-                favor.npcName, favor.description),
-            "favor_started",
-            5000
-        )
-        
-        return true
-    end
-    
-    return false
-end
 
 function NPCFavorSystem:completeFavor(favorId)
     local favor = self:getFavorById(favorId)
@@ -1027,11 +1060,55 @@ function NPCFavorSystem:applyFavorRewards(favor)
         
         -- Update NPC stats
         npc.totalFavorsCompleted = (npc.totalFavorsCompleted or 0) + 1
-        
+
+        -- 4m: Bonus rewards for perfect completion
+        -- Perfect = completed well before deadline (>50% time remaining)
+        local isPerfect = false
+        if favor.completionDuration and favor.expirationTime and favor.createdTime then
+            local totalTime = favor.expirationTime - favor.createdTime
+            local timeUsed = favor.completionDuration
+            if totalTime > 0 and timeUsed < totalTime * 0.5 then
+                isPerfect = true
+            end
+        end
+
+        if isPerfect then
+            local bonusRel = math.ceil((favor.reward.relationship or 0) * 0.5)
+            local bonusMoney = math.ceil((favor.reward.money or 0) * 0.25)
+
+            if bonusRel > 0 then
+                self.npcSystem.relationshipManager:updateRelationship(
+                    npc.id, bonusRel, "perfect_completion"
+                )
+            end
+            if bonusMoney > 0 and g_currentMission.player then
+                g_currentMission:addMoney(
+                    bonusMoney,
+                    g_currentMission.player.farmId,
+                    MoneyType.OTHER,
+                    true
+                )
+            end
+
+            -- Notification about perfect completion
+            self:queueNotification(
+                "Perfect Completion!",
+                string.format("Bonus: +%d relationship, +$%d for completing early!", bonusRel, bonusMoney),
+                "favor_perfect",
+                5000
+            )
+
+            if self.npcSystem.settings.debugMode then
+                print(string.format("PERFECT favor completion bonus: +%d rel, +%d money for %s",
+                    bonusRel, bonusMoney, npc.name))
+            end
+        end
+
         -- Log for debugging
         if self.npcSystem.settings.debugMode then
-            print(string.format("Favor rewards applied: +%d relationship, +%d money for %s",
-                favor.reward.relationship or 0, favor.reward.money or 0, npc.name))
+            print(string.format("Favor rewards applied: +%d relationship, +%d money for %s%s",
+                favor.reward.relationship or 0, favor.reward.money or 0, npc.name,
+                isPerfect and " (PERFECT)" or ""))
         end
     end
 end
@@ -1122,6 +1199,64 @@ function NPCFavorSystem:getActiveFavors()
     return self.activeFavors
 end
 
+--- Restore an active favor from saved data (called during loadFromXMLFile).
+-- Reconstructs the favor structure from minimal saved fields and re-inserts it
+-- into the active favors list with recalculated expiration time.
+-- @param savedFavor  Table with npcId, npcName, type, description, timeRemaining, progress, reward
+function NPCFavorSystem:restoreFavor(savedFavor)
+    if not savedFavor or not savedFavor.type or savedFavor.type == "" then
+        return
+    end
+
+    -- Look up the favor type definition
+    local favorType = nil
+    for _, ft in ipairs(self.favorTypes) do
+        if ft.id == savedFavor.type then
+            favorType = ft
+            break
+        end
+    end
+
+    local currentTime = g_currentMission and g_currentMission.time or 0
+
+    local favor = {
+        id = #self.activeFavors + #self.completedFavors + #self.failedFavors + 1,
+        npcId = savedFavor.npcId or 0,
+        npcName = savedFavor.npcName or "",
+        type = savedFavor.type,
+        name = favorType and favorType.name or savedFavor.type,
+        description = savedFavor.description or (favorType and favorType.description or ""),
+        difficulty = favorType and favorType.difficulty or 1,
+        category = favorType and favorType.category or "misc",
+
+        status = "active",
+        progress = savedFavor.progress or 0,
+        progressDetails = {},
+
+        createdTime = currentTime,
+        expirationTime = currentTime + (savedFavor.timeRemaining or 0),
+        timeRemaining = savedFavor.timeRemaining or 0,
+        estimatedCompletionTime = nil,
+
+        requirements = favorType and favorType.requirements or {},
+        reward = favorType and favorType.reward or { relationship = 10, money = savedFavor.reward or 0, xp = 0 },
+        penalty = favorType and favorType.penalty or { relationship = -5, reputation = -10 },
+
+        location = nil,
+        taskData = {},
+        startTime = currentTime,
+        completionTime = nil,
+        completionDuration = nil,
+        playerNotes = "",
+        priority = 1,
+        currentStep = 1,
+        totalSteps = 1,
+        steps = {}
+    }
+
+    table.insert(self.activeFavors, favor)
+end
+
 function NPCFavorSystem:getCompletedFavors()
     return self.completedFavors
 end
@@ -1130,9 +1265,6 @@ function NPCFavorSystem:getFailedFavors()
     return self.failedFavors
 end
 
-function NPCFavorSystem:getAbandonedFavors()
-    return self.abandonedFavors
-end
 
 function NPCFavorSystem:getFavorById(favorId)
     -- Check active favors
@@ -1181,19 +1313,3 @@ function NPCFavorSystem:getNPCFromFavor(favorId)
     return nil
 end
 
-function NPCFavorSystem:getFavorStats()
-    return self.stats
-end
-
-function NPCFavorSystem:getFavorSummary()
-    local summary = {
-        active = #self.activeFavors,
-        completed = #self.completedFavors,
-        failed = #self.failedFavors,
-        abandoned = #self.abandonedFavors,
-        total = #self.activeFavors + #self.completedFavors + #self.failedFavors + #self.abandonedFavors,
-        stats = self.stats
-    }
-    
-    return summary
-end
