@@ -83,6 +83,7 @@ if modDirectory then
     source(modDirectory .. "src/gui/DialogLoader.lua")
     source(modDirectory .. "src/gui/NPCDialog.lua")
     source(modDirectory .. "src/gui/NPCListDialog.lua")
+    source(modDirectory .. "src/gui/NPCFavorManagementDialog.lua")
     source(modDirectory .. "src/settings/NPCFavorGUI.lua")
 
     -- Main coordinator
