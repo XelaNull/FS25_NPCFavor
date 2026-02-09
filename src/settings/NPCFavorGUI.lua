@@ -51,6 +51,7 @@ function NPCFavorGUI:registerConsoleCommands()
     addConsoleCommand("npcGoto", "Teleport to an NPC by number", "npcGoto", self)
     addConsoleCommand("npcProbe", "Probe animation system APIs", "npcProbe", self)
     addConsoleCommand("npcVehicleMode", "Switch vehicle mode (hybrid/realistic/visual)", "npcVehicleMode", self)
+    addConsoleCommand("npcFavors", "Open favor management dialog", "npcFavors", self)
 
     print("[NPC Favor] Console commands registered successfully")
 end
@@ -112,6 +113,7 @@ npcDebug [on|off]   - Toggle debug mode
 npcReload           - Reload NPC settings
 npcGoto [number]    - Teleport to an NPC (no number = show list)
 npcProbe            - Probe animation system APIs
+npcFavors           - Open favor management dialog
 npcVehicleMode [mode] - Switch vehicle mode (hybrid/realistic/visual)
 npcTest             - Test function
 
@@ -212,11 +214,17 @@ function NPCFavorGUI:npcGoto(num)
         end
     end
 
-    -- Teleport the player
+   -- Calculate rotation to face NPC (Issue #5 fix)
+    local dx = npc.position.x - x
+    local dz = npc.position.z - z
+    local rotY = math.atan2(dx, dz)
+
+    -- Teleport the player and rotate to face NPC
     local teleported = false
     if g_localPlayer and g_localPlayer.rootNode and g_localPlayer.rootNode ~= 0 then
         pcall(function()
             setWorldTranslation(g_localPlayer.rootNode, x, y, z)
+            setWorldRotation(g_localPlayer.rootNode, 0, rotY, 0)  -- ADDED: Rotate to face NPC
             teleported = true
         end)
     end
@@ -225,9 +233,15 @@ function NPCFavorGUI:npcGoto(num)
         if player.rootNode and player.rootNode ~= 0 then
             pcall(function()
                 setWorldTranslation(player.rootNode, x, y, z)
+                setWorldRotation(player.rootNode, 0, rotY, 0)  -- ADDED: Rotate to face NPC
                 teleported = true
             end)
         end
+    end
+    
+    -- Notify NPCSystem of teleportation for UI stabilization (Issue #6 fix)
+    if g_NPCSystem and teleported then
+        g_NPCSystem.lastTeleportTime = g_NPCSystem:getCurrentGameTime()
     end
 
     if teleported then
@@ -243,6 +257,39 @@ function NPCFavorGUI:npcGoto(num)
         return string.format("Could not teleport. %s is at map(%d, %d) - go there manually.",
             npc.name, mapX, mapZ)
     end
+end
+
+function NPCFavorGUI:npcFavors()
+    if not g_NPCSystem then
+        return "NPC System not initialized"
+    end
+
+    -- Show favor management dialog if DialogLoader is available
+    if DialogLoader and DialogLoader.show then
+        local shown = DialogLoader.show("NPCFavorManagementDialog", "setNPCSystem", g_NPCSystem)
+        if shown then
+            return "Favor management dialog opened"
+        end
+    end
+
+    -- Fallback to console text if dialog unavailable
+    if not g_NPCSystem.favorSystem then
+        return "No active favors"
+    end
+    
+    local activeFavors = g_NPCSystem.favorSystem.activeFavors or {}
+    if #activeFavors == 0 then
+        return "No active favors"
+    end
+    
+    local result = "=== Active Favors ===\n"
+    for i, favor in ipairs(activeFavors) do
+        local npc = g_NPCSystem:getNPCById(favor.npcId)
+        local npcName = npc and npc.name or "Unknown"
+        result = result .. string.format("%d. %s - %s (Reward: $%d)\n",
+            i, npcName, favor.description or favor.type, favor.reward or 0)
+    end
+    return result
 end
 
 function NPCFavorGUI:npcProbe()
