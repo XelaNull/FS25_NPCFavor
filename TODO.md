@@ -97,15 +97,24 @@ This TODO reflects the **honest current state** of the mod as of v1.2.2.4. Items
 
 ### Medium-Term
 - [ ] Make NPC vehicles functional (major engine limitation to solve)
+- [ ] Vehicle parking logic near destinations (VISION: vehicles park at work/shop/home)
 - [ ] Group conversation content for gatherings and walking pairs
 - [ ] Localize flavor text (backstories, mood dialog, personality responses) in all 10 languages
 - [ ] Favor completion detection for all 7 favor types
 - [ ] NPC memory system driving behavior (10 records per NPC exist but don't influence decisions yet)
+- [ ] Contextual favor triggers (NPC vehicle breaks down, missed delivery, weather emergency)
+- [ ] Player-offered favors (currently only NPCs can request; VISION: player can offer help too)
+- [ ] NPC role differentiation (farmer, shop owner, contractor, resident affect schedules and favor types)
+- [ ] Personality-preferred favor types (generous NPCs ask different favors than grumpy ones)
 
 ### Long-Term / Aspirational
 - [ ] NPCs requesting favors proactively (approaching the player)
 - [ ] NPCs refusing help based on past behavior patterns
 - [ ] Reputation-based unlocks (discounts at shops, access to special tasks)
+- [ ] Visiting NPCs at home (knock on door, home-based interactions)
+- [ ] Home-based mood modifiers (distance from home, home condition affecting NPC mood)
+- [ ] Word of mouth (NPCs share opinions about the player with each other, indirect consequences)
+- [ ] Economy tie-ins (NPC farm output affects local market prices)
 - [ ] Hooks for other mods to register custom NPCs or favor types
 - [ ] Southern hemisphere season support
 - [ ] Relative time formatting in UI ("2 hours ago", "yesterday")
