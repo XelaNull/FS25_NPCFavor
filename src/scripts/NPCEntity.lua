@@ -1850,15 +1850,7 @@ function NPCEntity:createMapHotspot(entity, npc)
         local name = (npc and npc.name) or "NPC"
         local hotspot = PlaceableHotspot.new()
 
-        -- Create icon overlay using the mod's icon.dds
-        local width, height = getNormalizedScreenValues(48, 48)
-        local modDir = self.npcSystem and self.npcSystem.modDirectory
-        if modDir then
-            local iconFile = Utils.getFilename("icon.dds", modDir)
-            hotspot.icon = Overlay.new(iconFile, 0, 0, width, height)
-        end
-
-        -- Set type (provides fallback built-in icon if custom icon fails)
+        -- Use built-in exclamation mark icon (custom icon.dds can't load from ZIP)
         hotspot.placeableType = PlaceableHotspot.TYPE.EXCLAMATION_MARK
 
         -- Set display name (setName for hover tooltip)
