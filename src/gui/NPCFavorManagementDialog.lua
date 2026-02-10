@@ -325,55 +325,10 @@ for i = 1, NPCFavorManagementDialog.MAX_FAVORS do
         
         -- Close dialog first
         self:close()
-        
-        -- Use same teleport logic as npcGoto
-        local angle = math.random() * math.pi * 2
-        local distance = 3
-        local x = npc.position.x + math.cos(angle) * distance
-        local y = npc.position.y
-        local z = npc.position.z + math.sin(angle) * distance
-        
-        -- Snap to terrain
-        if g_currentMission and g_currentMission.terrainRootNode then
-            local ok, h = pcall(getTerrainHeightAtWorldPos,
-                g_currentMission.terrainRootNode, x, 0, z)
-            if ok and h then
-                y = h + 0.05
-            end
-        end
-        
-        -- Calculate rotation to face NPC
-        local dx = npc.position.x - x
-        local dz = npc.position.z - z
-        local rotY = math.atan2(dx, dz)
-        
-        -- Teleport
-        local teleported = false
-        if g_localPlayer and g_localPlayer.rootNode and g_localPlayer.rootNode ~= 0 then
-            pcall(function()
-                setWorldTranslation(g_localPlayer.rootNode, x, y, z)
-                setWorldRotation(g_localPlayer.rootNode, 0, rotY, 0)
-                teleported = true
-            end)
-        end
-        if not teleported and g_currentMission and g_currentMission.player then
-            local player = g_currentMission.player
-            if player.rootNode and player.rootNode ~= 0 then
-                pcall(function()
-                    setWorldTranslation(player.rootNode, x, y, z)
-                    setWorldRotation(player.rootNode, 0, rotY, 0)
-                    teleported = true
-                end)
-            end
-        end
-        
-        if teleported then
-            print(string.format("[NPC Favor] Teleported to %s", npc.name))
-            -- Notify system for UI stabilization
-            if self.npcSystem then
-                self.npcSystem.lastTeleportTime = self.npcSystem:getCurrentGameTime()
-            end
-        end
+
+        -- Smart teleport: context-aware positioning (Issue #6)
+        local success, message = NPCTeleport.teleportToNPC(self.npcSystem, npc)
+        print("[NPC Favor] " .. (message or "Teleport attempted"))
     end
     
     -- Complete Favor (manual/testing)

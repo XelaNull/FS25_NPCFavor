@@ -602,6 +602,7 @@ function NPCSystem:getExteriorPositionNear(buildingX, buildingZ, building, exclu
     return x, z
 end
 
+
 function NPCSystem:initializeNPCs()
     -- Classify all world buildings before spawning NPCs
     self:classifyBuildings()

@@ -681,9 +681,13 @@ function NPCEntity:loadAnimatedCharacterDirect(entity, npc)
                 -- Load appearance style (clothing) with variation per NPC
                 pcall(function()
                     if humanModel.loadFromStyleAsync then
-                        -- Start with defaultStyle as base
+                        -- For female NPCs, always create a fresh PlayerStyle and force-load the
+                        -- female XML configuration.  PlayerStyle.defaultStyle() returns a style
+                        -- pre-loaded with MALE items; calling loadConfigurationIfRequired() after
+                        -- merely changing xmlFilename is a no-op ("already loaded"), leaving
+                        -- female outfit slots unresolvable and producing male-looking characters.
                         local style = nil
-                        if PlayerStyle.defaultStyle then
+                        if not isFemale and PlayerStyle.defaultStyle then
                             local okDS, ds = pcall(PlayerStyle.defaultStyle)
                             if okDS and ds then style = ds end
                         end
@@ -694,9 +698,13 @@ function NPCEntity:loadAnimatedCharacterDirect(entity, npc)
                         -- Ensure the style knows which model XML to use
                         pcall(function() style.xmlFilename = xmlFilename end)
 
-                        -- Try loading the configuration (available items)
+                        -- Load configuration: force-load via loadConfigurationXML for female NPCs
+                        -- to ensure playerF items are available; use loadConfigurationIfRequired
+                        -- for male NPCs where defaultStyle already has correct items.
                         pcall(function()
-                            if style.loadConfigurationIfRequired then
+                            if isFemale and style.loadConfigurationXML then
+                                style:loadConfigurationXML(xmlFilename)
+                            elseif style.loadConfigurationIfRequired then
                                 style:loadConfigurationIfRequired()
                             elseif style.loadConfigurationXML then
                                 style:loadConfigurationXML(xmlFilename)
@@ -945,6 +953,65 @@ function NPCEntity:loadAnimatedCharacterDirect(entity, npc)
                                 entity.animCharSet = newCS
                                 entity.lastWalkState = nil  -- Force re-evaluation in update
                                 print("[NPCEntity] DIRECT: Re-initialized animation after style load, newCS=" .. tostring(newCS))
+                            end)
+
+                            -- =====================================================
+                            -- Accessory Y-offset correction: after style loading,
+                            -- traverse the model hierarchy to find headgear/glasses
+                            -- attachment nodes and nudge them to fix floating hats
+                            -- and low-sitting glasses.
+                            -- =====================================================
+                            pcall(function()
+                                if not humanModel.rootNode or humanModel.rootNode == 0 then return end
+
+                                -- Recursive node search by name substring
+                                local function findNodes(parent, pattern, results)
+                                    results = results or {}
+                                    local numChildren = getNumOfChildren(parent)
+                                    for i = 0, numChildren - 1 do
+                                        local child = getChildAt(parent, i)
+                                        if child and child ~= 0 then
+                                            local okN, nodeName = pcall(getName, child)
+                                            if okN and nodeName then
+                                                local lower = nodeName:lower()
+                                                if lower:find(pattern) then
+                                                    table.insert(results, {node = child, name = nodeName})
+                                                end
+                                            end
+                                            findNodes(child, pattern, results)
+                                        end
+                                    end
+                                    return results
+                                end
+
+                                -- Adjust headgear nodes (hats) — lower by ~1.75 inches (0.044m)
+                                local hatNodes = findNodes(humanModel.rootNode, "headgear")
+                                for _, hat in ipairs(hatNodes) do
+                                    local okT, hx, hy, hz = pcall(getTranslation, hat.node)
+                                    if okT then
+                                        setTranslation(hat.node, hx, hy - 0.044, hz)
+                                        if debug then
+                                            print("[NPCEntity] Adjusted headgear node '" .. hat.name
+                                                .. "' Y: " .. tostring(hy) .. " -> " .. tostring(hy - 0.044))
+                                        end
+                                    end
+                                end
+
+                                -- Adjust glasses nodes — raise by ~0.5 inch (0.012m)
+                                local glassNodes = findNodes(humanModel.rootNode, "glasses")
+                                if #glassNodes == 0 then
+                                    glassNodes = findNodes(humanModel.rootNode, "facegear")
+                                end
+                                for _, gl in ipairs(glassNodes) do
+                                    local okT, gx, gy, gz = pcall(getTranslation, gl.node)
+                                    if okT then
+                                        setTranslation(gl.node, gx, gy + 0.012, gz)
+                                        if debug then
+                                            print("[NPCEntity] Adjusted glasses node '" .. gl.name
+                                                .. "' Y: " .. tostring(gy) .. " -> " .. tostring(gy + 0.012))
+                                        end
+                                    end
+                                end
                             end)
                         end, nil, nil)
                     end

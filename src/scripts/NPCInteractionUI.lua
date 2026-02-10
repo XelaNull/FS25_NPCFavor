@@ -651,17 +651,46 @@ end
 -- @param worldX  World X position
 -- @param worldY  World Y position
 -- @param worldZ  World Z position
--- @return number, number  screenX, screenY (or nil, nil if behind camera)
+-- @return number, number  screenX, screenY (or nil, nil if behind camera or off-screen)
 function NPCInteractionUI:projectWorldToScreen(worldX, worldY, worldZ)
     -- FS25 project() takes 3 args (no camera node) and returns normalized 0-1 coords + depth
     if not project then
         return nil, nil
     end
 
+    -- First check: is the point actually in front of the camera?
+    -- project() can return valid-looking screenX/screenY for points behind the camera
+    -- (the projection math mirrors them), so we need to verify using the camera's
+    -- forward vector dot product with the direction to the target.
+    local camX, camY, camZ
+    local dirX, dirY, dirZ
+    local ok = pcall(function()
+        local cam = getCamera()
+        if cam and cam ~= 0 then
+            camX, camY, camZ = getWorldTranslation(cam)
+            dirX, dirY, dirZ = localDirectionToWorld(cam, 0, 0, -1)
+        end
+    end)
+
+    if ok and camX and dirX then
+        -- Vector from camera to target
+        local toX = worldX - camX
+        local toY = worldY - camY
+        local toZ = worldZ - camZ
+        -- Dot product: positive = in front, negative = behind
+        local dot = toX * dirX + toY * dirY + toZ * dirZ
+        if dot <= 0 then
+            return nil, nil
+        end
+    end
+
     local screenX, screenY, screenZ = project(worldX, worldY, worldZ)
 
-    -- screenZ > 0 means the point is in front of the camera
-    if screenX and screenY and screenZ and screenZ > 0 then
+    -- screenZ check: must be within view frustum (0 < z < 1)
+    -- and screen coords must be within visible area
+    if screenX and screenY and screenZ and screenZ > 0 and screenZ < 1
+        and screenX >= -0.1 and screenX <= 1.1
+        and screenY >= -0.1 and screenY <= 1.1 then
         return screenX, screenY
     end
 

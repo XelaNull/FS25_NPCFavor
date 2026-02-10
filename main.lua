@@ -79,6 +79,7 @@ if modDirectory then
     source(modDirectory .. "src/scripts/NPCFieldWork.lua")
     source(modDirectory .. "src/scripts/NPCScheduler.lua")
     source(modDirectory .. "src/scripts/NPCInteractionUI.lua")
+    source(modDirectory .. "src/scripts/NPCTeleport.lua")
 
     -- GUI
     source(modDirectory .. "src/gui/DialogLoader.lua")
