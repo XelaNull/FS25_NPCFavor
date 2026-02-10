@@ -3237,6 +3237,16 @@ function NPCSystem:_doSaveToXMLFile(missionInfo)
     xmlFile:save()
     xmlFile:delete()
 
+    -- Save settings to the same directory (tempsavegame during game save)
+    if self.settings and self.settings.saveToXMLFile then
+        local ok, settingsErr = pcall(function()
+            self.settings:saveToXMLFile(missionInfo)
+        end)
+        if not ok then
+            print(string.format("[NPC Favor] Settings save error (non-fatal): %s", tostring(settingsErr)))
+        end
+    end
+
     if self.settings.debugMode then
         print(string.format("[NPC Favor] Saved %d NPCs to %s", npcIndex, filePath))
     end
