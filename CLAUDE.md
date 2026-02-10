@@ -91,7 +91,6 @@ First articulated during ClaudeLife green cycle #5 (2026-02-06), when the organi
 | Active Mods | `%USERPROFILE%\Documents\My Games\FarmingSimulator2025\mods` |
 | Game Log | `%USERPROFILE%\Documents\My Games\FarmingSimulator2025\log.txt` |
 | **GIANTS Editor** | `C:\Program Files\GIANTS Software\GIANTS_Editor_10.0.11\editor.exe` |
-| **Sister Project** | `C:\github\FS25_UsedPlus` (shares patterns: DialogLoader, RVB input, save/load) |
 
 ---
 
