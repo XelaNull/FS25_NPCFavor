@@ -32,7 +32,7 @@
 -- =========================================================
 
 -- =========================================================
--- FS25 NPC Favor Mod (version 1.2.2.0)
+-- FS25 NPC Favor Mod (version 1.2.1.0)
 -- =========================================================
 -- Living NPC Neighborhood System
 -- =========================================================
@@ -46,7 +46,7 @@
 -- =========================================================
 
 -- Add version tracking
-local MOD_VERSION = "1.2.2.0"
+local MOD_VERSION = "1.2.1.0"
 local MOD_NAME = "FS25_NPCFavor"
 
 local modDirectory = g_currentModDirectory
@@ -83,7 +83,6 @@ if modDirectory then
     source(modDirectory .. "src/gui/DialogLoader.lua")
     source(modDirectory .. "src/gui/NPCDialog.lua")
     source(modDirectory .. "src/gui/NPCListDialog.lua")
-    source(modDirectory .. "src/gui/NPCFavorManagementDialog.lua")
     source(modDirectory .. "src/settings/NPCFavorGUI.lua")
 
     -- Main coordinator
@@ -120,7 +119,6 @@ local function loadedMission(mission, node)
             DialogLoader.init(modDirectory)
             DialogLoader.register("NPCDialog", NPCDialog, "gui/NPCDialog.xml")
             DialogLoader.register("NPCListDialog", NPCListDialog, "gui/NPCListDialog.xml")
-            DialogLoader.register("NPCFavorManagementDialog", NPCFavorManagementDialog, "gui/NPCFavorManagementDialog.xml")  -- NEW
 
             -- Eagerly load the NPC interaction dialog (used on E-key press)
             DialogLoader.ensureLoaded("NPCDialog")
@@ -273,8 +271,6 @@ end
 
 local npcInteractActionEventId = nil
 local npcInteractOriginalFunc = nil
-local favorMenuActionEventId = nil     -- NEW for F6
-local npcListActionEventId = nil       -- NEW for F7
 
 local function npcInteractActionCallback(self, actionName, inputValue, callbackState, isAnalog)
     if inputValue <= 0 then
@@ -334,28 +330,6 @@ local function npcInteractActionCallback(self, actionName, inputValue, callbackS
     end
 end
 
--- F6: Open Favor Management
-local function favorMenuActionCallback(actionName, inputValue, callbackState, isAnalog)
-    if npcSystem and npcSystem.isInitialized then
-        if DialogLoader and DialogLoader.show then
-            DialogLoader.show("NPCFavorManagementDialog", "setNPCSystem", npcSystem)
-        else
-            print("[NPC Favor] Favor management dialog not available")
-        end
-    end
-end
-
--- F7: Open NPC List
-local function npcListActionCallback(actionName, inputValue, callbackState, isAnalog)
-    if npcSystem and npcSystem.isInitialized then
-        if DialogLoader and DialogLoader.show then
-            DialogLoader.show("NPCListDialog", "setNPCSystem", npcSystem)
-        else
-            print("[NPC Favor] NPC list dialog not available")
-        end
-    end
-end
-
 local function hookNPCInteractInput()
     if npcInteractOriginalFunc ~= nil then
         return -- Already hooked
@@ -398,38 +372,6 @@ local function hookNPCInteractInput()
                 npcInteractActionEventId = eventId
             end
         end
-
-        -- Register F6: Favor Menu
-            local favorMenuActionId = InputAction.FAVOR_MENU
-            if favorMenuActionId ~= nil then
-                local success, eventId = g_inputBinding:registerActionEvent(
-                    favorMenuActionId,
-                    NPCSystem,
-                    favorMenuActionCallback,
-                    false, true, false, false, nil, true
-                )
-                if success and eventId ~= nil then
-                    favorMenuActionEventId = eventId
-                    g_inputBinding:setActionEventTextPriority(eventId, GS_PRIO_NORMAL)
-                    g_inputBinding:setActionEventText(eventId, g_i18n:getText("input_FAVOR_MENU") or "Favor Menu")
-                end
-            end
-
-            -- Register F7: NPC List
-            local npcListActionId = InputAction.NPC_LIST
-            if npcListActionId ~= nil then
-                local success, eventId = g_inputBinding:registerActionEvent(
-                    npcListActionId,
-                    NPCSystem,
-                    npcListActionCallback,
-                    false, true, false, false, nil, true
-                )
-                if success and eventId ~= nil then
-                    npcListActionEventId = eventId
-                    g_inputBinding:setActionEventTextPriority(eventId, GS_PRIO_NORMAL)
-                    g_inputBinding:setActionEventText(eventId, g_i18n:getText("input_NPC_LIST") or "NPC List")
-                end
-            end
     end
 
 end
@@ -446,7 +388,8 @@ if FSBaseMission and FSBaseMission.update then
         -- E key: show "Talk to NPC" when near (hide when dialog is open)
         if npcInteractActionEventId ~= nil then
             local shouldShow = false
-            local promptText = g_i18n:getText("input_NPC_INTERACT") or "Talk to NPC"
+            -- local promptText = g_i18n:getText("input_npc_interact") or "Talk to NPC"
+            local promptText = g_i18n:getText("input_NPC_INTERACT")
             local isDialogOpen = g_gui:getIsDialogVisible()
 
             if not isDialogOpen and npcSystem.nearbyNPCs then
