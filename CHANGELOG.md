@@ -87,9 +87,54 @@ All notable changes to the FS25_NPCFavor mod are documented below, organized by 
 
 ---
 
-## v1.2.0.0 -- NPC AI Overhaul (in progress)
+## v1.2.2.1 -- Favor Dialog Fixes & Refactor
 
-**Branch:** `feature/living-neighborhood-system` (not yet merged)
+**Commits:** `9e56d76` through `c4e293d` (2026-02-09)
+**Author:** TisonK
+**Fixes:** Critical load failure from v1.2.2.0
+
+### Favor Management Dialog Fixes
+- **Critical fix**: Added missing `source()` call in `main.lua` for `NPCFavorManagementDialog.lua` -- the v1.2.2.0 dialog could not actually open because its Lua code was never loaded
+- Relocated `NPCFavorManagementDialog.lua` from `gui/` to `src/gui/` (consistent with other dialog files)
+- Rewrote dialog XML from custom `npc*` profiles to proper FS25 dialog patterns (`fs25_dialogBg`, `fs25_dialogContentContainer`, `buttonOK`, etc.)
+- Added defensive nil-checks on all GUI element access (`if elem and elem.setText then`)
+- Fixed relationship method name (`modifyRelationship` → `updateRelationship`)
+- Added support for both scalar (`favor.reward = 500`) and table (`favor.reward = {amount=500}`) reward formats
+- Reduced max visible favors from 10 to 5 (matching the 5-row dialog layout)
+
+---
+
+## v1.2.2.0 -- Favor Management Dialog & Keybinds
+
+**Commits:** `3e80c56` through `22fd032` (2026-02-09)
+**Author:** TisonK
+**Issues Fixed:** #5 (NPC behind player after teleport), #6 (floating text after teleport), #9 (favor management UI), #10 (NPC list keybind)
+
+### Favor Management Dialog (new -- fixes #9)
+- New `NPCFavorManagementDialog` (XML + Lua) showing active favors with NPC name, description, time remaining, and reward
+- 4 action buttons per favor: View details, Cancel (with -10 relationship penalty), Go To (teleport), Complete (with money reward)
+- Relationship-colored NPC names and time urgency coloring
+- Accessible via F6 key or `npcFavors` console command
+
+### Keyboard Shortcuts (fixes #10)
+- **F6** (`FAVOR_MENU`) -- Opens Favor Management dialog
+- **F7** (`NPC_LIST`) -- Opens NPC roster dialog (previously console-only via `npcList`)
+- Both keybinds registered with full RVB pattern, localized in all 10 languages
+
+### Teleport Improvements
+- **Face-NPC rotation** (fixes #5): After all teleports (npcGoto, NPC List, Favor dialog), player now rotates 180° to face the NPC instead of having NPC behind them
+- **UI stabilization** (fixes #6): Added `lastTeleportTime` tracking with 0.5 game-minute cooldown to prevent HUD text jank after teleporting
+
+### Documentation
+- Added `VISION.md` -- 211-line design pillars document with 4-phase roadmap
+- Added `TODO.md` -- 130-line development roadmap organized by priority tier
+- Updated `README.md` to clarify multiplayer is untested
+
+---
+
+## v1.2.0.0 -- NPC AI Overhaul
+
+**Branch:** `feature/living-neighborhood-system` (PR #3, merged `bd99ca3`)
 **Authors:** UsedPlus Team (XelaNull + Claude AI)
 **Scope:** 38 files changed, ~17,400 lines added
 
@@ -168,7 +213,7 @@ A comprehensive AI overhaul transforming mechanical schedule-following NPCs into
 ### Known Limitations
 - **NPC animation sliding** -- Some NPCs slide along the ground without their walk animation playing; root cause not yet identified
 - **Silent groups and walking pairs** -- Group gatherings and walking pairs position NPCs correctly but generate no conversation content; only 1-on-1 socializing produces speech bubbles
-- **Map hotspots** -- MapHotspot creation code exists but markers do not appear on the in-game map
+- **Map hotspots** -- MapHotspot creation code exists but markers do not appear on the in-game map *(fixed in v1.2.2.2)*
 - **NPC vehicles/tractors** -- Code exists but i3d models cannot be loaded from game pak archives at runtime; NPCs walk everywhere
 - **Flavor text localization** -- Mood prefixes, backstories, birthday messages, and personality dialog added in v1.2.0 are English-only (core UI is fully localized)
 
@@ -321,13 +366,24 @@ The original upload establishing the mod's architecture and vision:
 
 | # | Title | Reporter | Status | Resolution |
 |---|-------|----------|--------|------------|
-| 1 | Not Showing Ingame | Tankieboy | Open | Fixed in v1.0.0.1 (stub objects replaced with real constructors, descVersion corrected) |
-| 2 | No visual markers at the map | Dueesberch | Open | Partially addressed: MapIcon replaced with MapHotspot API, but markers still don't appear in-game. Listed as known limitation. |
-| 4 | erreur lua (renderOverlay in update callback) | squall39 | Open | Fixed in v1.0.1.0 commit `2f79a7a` (moved rendering to draw callback) |
+| 1 | Not Showing Ingame | Tankieboy | Closed | Fixed in v1.0.0.1 (stub objects replaced with real constructors, descVersion corrected) |
+| 2 | No visual markers at the map | Dueesberch | Closed | Fixed in v1.2.2.2 (PlaceableHotspot with icon overlay, sleep/wake hotspot management) |
+| 4 | erreur lua (renderOverlay in update callback) | squall39 | Closed | Fixed in v1.0.1.0 commit `2f79a7a` (moved rendering to draw callback) |
+| 5 | NPC on player backside after teleport | Dueesberch | Closed | Fixed in v1.2.2.0 (player rotates 180° to face NPC after teleport) |
+| 6 | Floating text after teleport | TisonK | Closed | Fixed in v1.2.2.0 (lastTeleportTime cooldown prevents HUD jank) |
+| 7 | Animations and Progress | | Open | NPC animation sliding -- root cause not yet identified |
+| 8 | Won't load due to ZIP packaging | Wreyth | Closed | Fixed in v1.2.2.2 (build.sh creates properly structured ZIP) |
+| 9 | Interaction with active favor | TisonK | Closed | Fixed in v1.2.2.0 (Favor Management Dialog with view/cancel/goto/complete) |
+| 10 | Keybinding the npcList UI | TisonK | Closed | Fixed in v1.2.2.0 (F7 keybind opens NPC roster) |
+| 11 | Couple of issues and a suggestion | | Open | |
+| 12 | NPC Map Hotspot Icons Not Appearing | | Open | Fixed in v1.2.2.2 (PlaceableHotspot with icon overlay) |
+| 14 | Borrow tractor favor has no interaction | | Open | |
+| 15 | Settings reset when exiting savegame | | Open | Fixed in v1.2.2.4 (UsedPlus save pattern, XMLFile.loadIfExists) |
 
 ## Pull Requests
 
 | # | Title | Author | Status |
 |---|-------|--------|--------|
-| 3 | Feature: Living Neighborhood System - Complete Implementation v1.1.0 (Fixes #1, #2) | XelaNull (UsedPlus Team) | Open |
+| 3 | Feature: Living Neighborhood System v1.1.0 (Fixes #1, #2) | XelaNull | Merged |
+| 17 | v1.2.2.4: Settings Persistence & ESC Menu Expansion (Fixes #15) | XelaNull | Open |
 
