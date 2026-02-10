@@ -32,7 +32,7 @@
 -- =========================================================
 
 -- =========================================================
--- FS25 NPC Favor Mod (version 1.2.2.0)
+-- FS25 NPC Favor Mod (version 1.2.2.3)
 -- =========================================================
 -- Living NPC Neighborhood System
 -- =========================================================
@@ -46,7 +46,7 @@
 -- =========================================================
 
 -- Add version tracking
-local MOD_VERSION = "1.2.2.0"
+local MOD_VERSION = "1.2.2.3"
 local MOD_NAME = "FS25_NPCFavor"
 
 local modDirectory = g_currentModDirectory
@@ -76,8 +76,10 @@ if modDirectory then
     source(modDirectory .. "src/scripts/NPCFavorSystem.lua")
     source(modDirectory .. "src/scripts/NPCEntity.lua")
     source(modDirectory .. "src/scripts/NPCAI.lua")
+    source(modDirectory .. "src/scripts/NPCFieldWork.lua")
     source(modDirectory .. "src/scripts/NPCScheduler.lua")
     source(modDirectory .. "src/scripts/NPCInteractionUI.lua")
+    source(modDirectory .. "src/scripts/NPCTeleport.lua")
 
     -- GUI
     source(modDirectory .. "src/gui/DialogLoader.lua")

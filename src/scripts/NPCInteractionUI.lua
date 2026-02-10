@@ -152,6 +152,28 @@ end
 -- inside draw callbacks, NOT update callbacks.
 
 function NPCInteractionUI:draw()
+    -- Skip NPC HUD rendering when a full-screen overlay is covering the screen.
+    -- FS25 ingameMap.state: 1=hidden, 2=round minimap, 3=square minimap, 4=large map
+    if g_currentMission then
+        if g_currentMission.paused then
+            return
+        end
+        -- Large map overlay
+        local hud = g_currentMission.hud
+        if hud and hud.ingameMap and hud.ingameMap.state == 4 then
+            return
+        end
+        -- ESC / in-game menu open
+        local igm = g_currentMission.inGameMenu
+        if igm and igm.isOpen then
+            return
+        end
+    end
+    -- Any GUI dialog (shop, settings, our own NPC dialogs, etc.)
+    if g_gui and g_gui.currentGui ~= nil then
+        return
+    end
+
     -- World-space interaction hint above NPC
     self:drawInteractionHint()
 
@@ -195,7 +217,7 @@ end
 --- Draw a single speech bubble above an NPC.
 -- @param npc  NPC data table with greetingText set
 function NPCInteractionUI:drawSpeechBubble(npc)
-    local worldY = npc.position.y + 2.8  -- above the name tag
+    local worldY = npc.position.y + 2.3  -- above the name tag
     local screenX, screenY = self:projectWorldToScreen(npc.position.x, worldY, npc.position.z)
     if not screenX or not screenY then return end
 
@@ -236,7 +258,10 @@ function NPCInteractionUI:drawNameTags()
             local dist = math.sqrt(dx * dx + dz * dz)
 
             if dist < 15 then
-                local worldY = npc.position.y + 2.3
+                -- Scale Y offset by distance: 1.8m up close, rising to 2.6m at 15m
+                -- so the name tag doesn't sink onto the NPC's head at range
+                local distFactor = math.min(1, dist / 15)
+                local worldY = npc.position.y + 1.8 + distFactor * 0.8
                 local screenX, screenY = self:projectWorldToScreen(npc.position.x, worldY, npc.position.z)
                 if screenX and screenY then
                     -- Fade based on distance (fully opaque within 8m, fading to 0 at 15m)
@@ -300,7 +325,7 @@ function NPCInteractionUI:drawInteractionHint()
     end
 
     local npc = self.interactionHintNPC
-    local x, y, z = npc.position.x, npc.position.y + 2.5, npc.position.z
+    local x, y, z = npc.position.x, npc.position.y + 2.0, npc.position.z
 
     local screenX, screenY = self:projectWorldToScreen(x, y, z)
 
@@ -651,17 +676,46 @@ end
 -- @param worldX  World X position
 -- @param worldY  World Y position
 -- @param worldZ  World Z position
--- @return number, number  screenX, screenY (or nil, nil if behind camera)
+-- @return number, number  screenX, screenY (or nil, nil if behind camera or off-screen)
 function NPCInteractionUI:projectWorldToScreen(worldX, worldY, worldZ)
     -- FS25 project() takes 3 args (no camera node) and returns normalized 0-1 coords + depth
     if not project then
         return nil, nil
     end
 
+    -- First check: is the point actually in front of the camera?
+    -- project() can return valid-looking screenX/screenY for points behind the camera
+    -- (the projection math mirrors them), so we need to verify using the camera's
+    -- forward vector dot product with the direction to the target.
+    local camX, camY, camZ
+    local dirX, dirY, dirZ
+    local ok = pcall(function()
+        local cam = getCamera()
+        if cam and cam ~= 0 then
+            camX, camY, camZ = getWorldTranslation(cam)
+            dirX, dirY, dirZ = localDirectionToWorld(cam, 0, 0, -1)
+        end
+    end)
+
+    if ok and camX and dirX then
+        -- Vector from camera to target
+        local toX = worldX - camX
+        local toY = worldY - camY
+        local toZ = worldZ - camZ
+        -- Dot product: positive = in front, negative = behind
+        local dot = toX * dirX + toY * dirY + toZ * dirZ
+        if dot <= 0 then
+            return nil, nil
+        end
+    end
+
     local screenX, screenY, screenZ = project(worldX, worldY, worldZ)
 
-    -- screenZ > 0 means the point is in front of the camera
-    if screenX and screenY and screenZ and screenZ > 0 then
+    -- screenZ check: must be within view frustum (0 < z < 1)
+    -- and screen coords must be within visible area
+    if screenX and screenY and screenZ and screenZ > 0 and screenZ < 1
+        and screenX >= -0.1 and screenX <= 1.1
+        and screenY >= -0.1 and screenY <= 1.1 then
         return screenX, screenY
     end
 

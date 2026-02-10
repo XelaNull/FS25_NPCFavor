@@ -224,6 +224,7 @@ function NPCSystem.new(mission, modDirectory, modName)
     self.interactionUI = NPCInteractionUI.new(self)
     self.settingsIntegration = NPCSettingsIntegration.new(self)
 
+    self.fieldWork = NPCFieldWork.new()
     self.gui = NPCFavorGUI.new(self)
 
     self.dailyEvents = {}
@@ -600,6 +601,7 @@ function NPCSystem:getExteriorPositionNear(buildingX, buildingZ, building, exclu
     x, z = self:getSafePosition(x, z, excludePlaceable)
     return x, z
 end
+
 
 function NPCSystem:initializeNPCs()
     -- Classify all world buildings before spawning NPCs

@@ -249,60 +249,9 @@ function NPCListDialog:teleportToRow(rowNum)
     -- Close dialog first so the player can see where they land
     self:close()
 
-    -- Teleport player 3m away from NPC (same logic as npcGoto)
-    local angle = math.random() * math.pi * 2
-    local x = npc.position.x + math.cos(angle) * 3
-    local y = npc.position.y
-    local z = npc.position.z + math.sin(angle) * 3
-
-    if sys.getSafePosition then
-        x, z = sys:getSafePosition(x, z, nil)
-    end
-
-    -- Snap to terrain
-    if g_currentMission and g_currentMission.terrainRootNode then
-        local ok, h = pcall(getTerrainHeightAtWorldPos,
-            g_currentMission.terrainRootNode, x, 0, z)
-        if ok and h then
-            y = h + 0.05
-        end
-    end
-
-    -- Calculate rotation to face NPC (Issue #5 fix)
-    local dx = npc.position.x - x
-    local dz = npc.position.z - z
-    local rotY = math.atan2(dx, dz)
-
-    -- Teleport the player and rotate to face NPC
-    local teleported = false
-    if g_localPlayer and g_localPlayer.rootNode and g_localPlayer.rootNode ~= 0 then
-        pcall(function()
-            setWorldTranslation(g_localPlayer.rootNode, x, y, z)
-            setWorldRotation(g_localPlayer.rootNode, 0, rotY, 0)  -- ADDED: Rotate to face NPC
-            teleported = true
-        end)
-    end
-    if not teleported and g_currentMission and g_currentMission.player then
-        local player = g_currentMission.player
-        if player.rootNode and player.rootNode ~= 0 then
-            pcall(function()
-                setWorldTranslation(player.rootNode, x, y, z)
-                setWorldRotation(player.rootNode, 0, rotY, 0)  -- ADDED: Rotate to face NPC
-                teleported = true
-            end)
-        end
-    end
-
-    -- Notify NPCSystem of teleportation for UI stabilization (Issue #6 fix)
-    if sys and teleported then
-        sys.lastTeleportTime = sys:getCurrentGameTime()
-    end
-
-    if teleported then
-        print(string.format("[NPC Favor] Teleported to %s", npc.name or "NPC"))
-    else
-        print(string.format("[NPC Favor] Could not teleport to %s", npc.name or "NPC"))
-    end
+    -- Smart teleport: context-aware positioning (Issue #6)
+    local success, message = NPCTeleport.teleportToNPC(sys, npc)
+    print("[NPC Favor] " .. (message or "Teleport attempted"))
 end
 
 -- Generate onClickRow1..onClickRow16 handlers dynamically

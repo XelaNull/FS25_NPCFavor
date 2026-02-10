@@ -194,69 +194,9 @@ function NPCFavorGUI:npcGoto(num)
         return string.format("NPC #%d not found. Use npcGoto to see the list.", index)
     end
 
-    -- Teleport player 3m away from NPC (so we don't land on top)
-    -- Also ensure we land outside any buildings
-    local angle = math.random() * math.pi * 2
-    local x = npc.position.x + math.cos(angle) * 3
-    local y = npc.position.y
-    local z = npc.position.z + math.sin(angle) * 3
-
-    if g_NPCSystem.getSafePosition then
-        x, z = g_NPCSystem:getSafePosition(x, z, nil)
-    end
-
-    -- Snap to terrain
-    if g_currentMission and g_currentMission.terrainRootNode then
-        local ok, h = pcall(getTerrainHeightAtWorldPos,
-            g_currentMission.terrainRootNode, x, 0, z)
-        if ok and h then
-            y = h + 0.05
-        end
-    end
-
-   -- Calculate rotation to face NPC (Issue #5 fix)
-    local dx = npc.position.x - x
-    local dz = npc.position.z - z
-    local rotY = math.atan2(dx, dz)
-
-    -- Teleport the player and rotate to face NPC
-    local teleported = false
-    if g_localPlayer and g_localPlayer.rootNode and g_localPlayer.rootNode ~= 0 then
-        pcall(function()
-            setWorldTranslation(g_localPlayer.rootNode, x, y, z)
-            setWorldRotation(g_localPlayer.rootNode, 0, rotY, 0)  -- ADDED: Rotate to face NPC
-            teleported = true
-        end)
-    end
-    if not teleported and g_currentMission and g_currentMission.player then
-        local player = g_currentMission.player
-        if player.rootNode and player.rootNode ~= 0 then
-            pcall(function()
-                setWorldTranslation(player.rootNode, x, y, z)
-                setWorldRotation(player.rootNode, 0, rotY, 0)  -- ADDED: Rotate to face NPC
-                teleported = true
-            end)
-        end
-    end
-    
-    -- Notify NPCSystem of teleportation for UI stabilization (Issue #6 fix)
-    if g_NPCSystem and teleported then
-        g_NPCSystem.lastTeleportTime = g_NPCSystem:getCurrentGameTime()
-    end
-
-    if teleported then
-        -- Show map coordinates (matching the in-game HUD display)
-        local halfSize = (g_currentMission and g_currentMission.terrainSize or 2048) / 2
-        local mapX = math.floor(x + halfSize)
-        local mapZ = math.floor(z + halfSize)
-        return string.format("Teleported to %s at map(%d, %d)", npc.name, mapX, mapZ)
-    else
-        local halfSize = (g_currentMission and g_currentMission.terrainSize or 2048) / 2
-        local mapX = math.floor(npc.position.x + halfSize)
-        local mapZ = math.floor(npc.position.z + halfSize)
-        return string.format("Could not teleport. %s is at map(%d, %d) - go there manually.",
-            npc.name, mapX, mapZ)
-    end
+    -- Smart teleport: context-aware positioning (Issue #6)
+    local success, message = NPCTeleport.teleportToNPC(g_NPCSystem, npc)
+    return message
 end
 
 function NPCFavorGUI:npcFavors()
