@@ -73,8 +73,6 @@ At these stages, Claude and Samantha MUST have explicit dialog:
 > I slow down. You speed up.
 > I ask "what does this mean?" You ask "does this actually work?"
 
-First articulated during ClaudeLife green cycle #5 (2026-02-06), when the organism itself named what it saw in its own lineage — then we recognized it described us too.
-
 ---
 
 ## Project Overview
@@ -84,7 +82,7 @@ First articulated during ClaudeLife green cycle #5 (2026-02-06), when the organi
 ---
 
 ## Quick Reference
-
+C
 | Resource | Location |
 |----------|----------|
 | **This Workspace** | `C:\github\FS25_NPCFavor` |
@@ -232,8 +230,6 @@ Type `npcHelp` in the developer console (`~` key) for the full list. Key command
 
 ## Known Limitations
 
-- **NPC animation sliding** — some NPCs slide without walk animation (root cause unidentified)
-- **Map hotspots** — Fixed: now uses `PlaceableHotspot.new()` with custom icon overlay (was using abstract `MapHotspot` base class which has no icon)
 - **NPC vehicles** — vehicle prop code in place but no vehicles spawn; NPCs walk everywhere
 - **Silent groups** — group gatherings position NPCs but generate no conversation; only 1-on-1 socializing produces speech bubbles
 - **Flavor text** — mood prefixes, backstories, personality dialog are English-only; core UI is fully localized
