@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Favori attivi:" />
 		<text name="npc_hud_and_more" text="...e %d altri" />
 		<text name="npc_interact_talk_to" text="Parla con %s" />
+		<text name="npc_display_section" text="Visualizzazione" />
+		<text name="npc_gameplay_section" text="Giocabilità" />
+		<text name="npc_debug_section" text="Debug" />
+		<text name="npc_show_favor_list_short" text="Mostra lista favori" />
+		<text name="npc_show_favor_list_long" text="Mostra la lista favori attivi sul HUD" />
+		<text name="npc_show_rel_bars_short" text="Mostra barre relazione" />
+		<text name="npc_show_rel_bars_long" text="Mostra barre progresso relazione quando parli con NPC" />
+		<text name="npc_show_map_markers_short" text="Mostra marcatori mappa" />
+		<text name="npc_show_map_markers_long" text="Mostra marcatori posizione NPC sulla mappa" />
+		<text name="npc_enable_gifts_short" text="Attiva regali" />
+		<text name="npc_enable_gifts_long" text="Permettere di fare regali ai NPC per migliorare le relazioni" />
+		<text name="npc_allow_multi_favors_short" text="Consenti favori multipli" />
+		<text name="npc_allow_multi_favors_long" text="Permettere di accettare più favori contemporaneamente" />
+		<text name="npc_max_active_favors_short" text="Max favori attivi" />
+		<text name="npc_max_active_favors_long" text="Numero massimo di favori attivi contemporaneamente" />
+		<text name="npc_rel_decay_short" text="Decadimento relazione" />
+		<text name="npc_rel_decay_long" text="Le relazioni diminuiscono lentamente se non mantenute" />
+		<text name="npc_reset" text="Ripristina sistema NPC" />
+		<text name="npc_favor_management_title" text="Favori attivi (%d)" />
+		<text name="npc_favor_management_footer" text="Annullare il favore riduce la relazione di 10  |  Completa per finire manualmente" />
+		<text name="button_view" text="Vedi" />
+		<text name="button_goto" text="Vai a" />
+		<text name="button_complete" text="Completa" />
+		<text name="input_FAVOR_MENU" text="Menu favori" />
+		<text name="input_NPC_LIST" text="Lista NPC" />
 	</texts>
 </l10n>

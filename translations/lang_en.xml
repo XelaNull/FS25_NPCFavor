@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Active Favors:" />
 		<text name="npc_hud_and_more" text="...and %d more" />
 		<text name="npc_interact_talk_to" text="Talk to %s" />
+		<text name="npc_display_section" text="Display" />
+		<text name="npc_gameplay_section" text="Gameplay" />
+		<text name="npc_debug_section" text="Debug" />
+		<text name="npc_show_favor_list_short" text="Show Favor List" />
+		<text name="npc_show_favor_list_long" text="Show the active favor list on the HUD" />
+		<text name="npc_show_rel_bars_short" text="Show Relationship Bars" />
+		<text name="npc_show_rel_bars_long" text="Show relationship progress bars when talking to NPCs" />
+		<text name="npc_show_map_markers_short" text="Show Map Markers" />
+		<text name="npc_show_map_markers_long" text="Show NPC location markers on the map" />
+		<text name="npc_enable_gifts_short" text="Enable Gifts" />
+		<text name="npc_enable_gifts_long" text="Allow giving gifts to NPCs to improve relationships" />
+		<text name="npc_allow_multi_favors_short" text="Allow Multiple Favors" />
+		<text name="npc_allow_multi_favors_long" text="Allow accepting multiple favors at the same time" />
+		<text name="npc_max_active_favors_short" text="Max Active Favors" />
+		<text name="npc_max_active_favors_long" text="Maximum number of favors you can have active at once" />
+		<text name="npc_rel_decay_short" text="Relationship Decay" />
+		<text name="npc_rel_decay_long" text="Relationships slowly decrease over time if not maintained" />
+		<text name="npc_reset" text="Reset NPC System" />
+		<text name="npc_favor_management_title" text="Active Favors (%d)" />
+		<text name="npc_favor_management_footer" text="Cancel favor to reduce relationship by 10  |  Complete to finish manually" />
+		<text name="button_view" text="View" />
+		<text name="button_goto" text="Go To" />
+		<text name="button_complete" text="Complete" />
+		<text name="input_FAVOR_MENU" text="Favor Menu" />
+		<text name="input_NPC_LIST" text="NPC List" />
 	</texts>
 </l10n>

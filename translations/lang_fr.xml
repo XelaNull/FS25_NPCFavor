@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Faveurs actives :" />
 		<text name="npc_hud_and_more" text="...et %d de plus" />
 		<text name="npc_interact_talk_to" text="Parler à %s" />
+		<text name="npc_display_section" text="Affichage" />
+		<text name="npc_gameplay_section" text="Jouabilité" />
+		<text name="npc_debug_section" text="Débogage" />
+		<text name="npc_show_favor_list_short" text="Afficher liste faveurs" />
+		<text name="npc_show_favor_list_long" text="Afficher la liste de faveurs actives sur le HUD" />
+		<text name="npc_show_rel_bars_short" text="Afficher barres relation" />
+		<text name="npc_show_rel_bars_long" text="Afficher les barres de progression des relations lors des discussions avec les PNJ" />
+		<text name="npc_show_map_markers_short" text="Afficher marqueurs carte" />
+		<text name="npc_show_map_markers_long" text="Afficher les marqueurs de position des PNJ sur la carte" />
+		<text name="npc_enable_gifts_short" text="Activer cadeaux" />
+		<text name="npc_enable_gifts_long" text="Permettre d'offrir des cadeaux aux PNJ pour améliorer les relations" />
+		<text name="npc_allow_multi_favors_short" text="Autoriser faveurs multiples" />
+		<text name="npc_allow_multi_favors_long" text="Permettre d'accepter plusieurs faveurs en même temps" />
+		<text name="npc_max_active_favors_short" text="Max faveurs actives" />
+		<text name="npc_max_active_favors_long" text="Nombre maximum de faveurs actives simultanément" />
+		<text name="npc_rel_decay_short" text="Déclin relation" />
+		<text name="npc_rel_decay_long" text="Les relations diminuent lentement si elles ne sont pas entretenues" />
+		<text name="npc_reset" text="Réinitialiser système PNJ" />
+		<text name="npc_favor_management_title" text="Faveurs actives (%d)" />
+		<text name="npc_favor_management_footer" text="Annuler la faveur réduit la relation de 10  |  Terminer pour finir manuellement" />
+		<text name="button_view" text="Voir" />
+		<text name="button_goto" text="Aller à" />
+		<text name="button_complete" text="Terminer" />
+		<text name="input_FAVOR_MENU" text="Menu des faveurs" />
+		<text name="input_NPC_LIST" text="Liste PNJ" />
 	</texts>
 </l10n>

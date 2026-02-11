@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Активные услуги:" />
 		<text name="npc_hud_and_more" text="...и еще %d" />
 		<text name="npc_interact_talk_to" text="Поговорить с %s" />
+		<text name="npc_display_section" text="Отображение" />
+		<text name="npc_gameplay_section" text="Геймплей" />
+		<text name="npc_debug_section" text="Отладка" />
+		<text name="npc_show_favor_list_short" text="Показывать список услуг" />
+		<text name="npc_show_favor_list_long" text="Показывать список активных услуг на HUD" />
+		<text name="npc_show_rel_bars_short" text="Показывать полосы отношений" />
+		<text name="npc_show_rel_bars_long" text="Показывать полосы прогресса отношений при разговоре с NPC" />
+		<text name="npc_show_map_markers_short" text="Показывать маркеры на карте" />
+		<text name="npc_show_map_markers_long" text="Показывать маркеры местоположения NPC на карте" />
+		<text name="npc_enable_gifts_short" text="Включить подарки" />
+		<text name="npc_enable_gifts_long" text="Позволить дарить подарки NPC для улучшения отношений" />
+		<text name="npc_allow_multi_favors_short" text="Разрешить несколько услуг" />
+		<text name="npc_allow_multi_favors_long" text="Разрешить принимать несколько услуг одновременно" />
+		<text name="npc_max_active_favors_short" text="Макс. активных услуг" />
+		<text name="npc_max_active_favors_long" text="Максимальное количество одновременно активных услуг" />
+		<text name="npc_rel_decay_short" text="Угасание отношений" />
+		<text name="npc_rel_decay_long" text="Отношения медленно ухудшаются если их не поддерживать" />
+		<text name="npc_reset" text="Сбросить систему NPC" />
+		<text name="npc_favor_management_title" text="Активные услуги (%d)" />
+		<text name="npc_favor_management_footer" text="Отмена услуги снижает отношения на 10  |  Завершить для ручного окончания" />
+		<text name="button_view" text="Просмотр" />
+		<text name="button_goto" text="Перейти к" />
+		<text name="button_complete" text="Завершить" />
+		<text name="input_FAVOR_MENU" text="Меню услуг" />
+		<text name="input_NPC_LIST" text="Список NPC" />
 	</texts>
 </l10n>

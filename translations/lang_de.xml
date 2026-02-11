@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Aktive Gefallen:" />
 		<text name="npc_hud_and_more" text="...und %d weitere" />
 		<text name="npc_interact_talk_to" text="Mit %s sprechen" />
+		<text name="npc_display_section" text="Anzeige" />
+		<text name="npc_gameplay_section" text="Spielmechanik" />
+		<text name="npc_debug_section" text="Debug" />
+		<text name="npc_show_favor_list_short" text="Gefallenliste anzeigen" />
+		<text name="npc_show_favor_list_long" text="Aktive Gefallenliste auf dem HUD anzeigen" />
+		<text name="npc_show_rel_bars_short" text="Beziehungsbalken anzeigen" />
+		<text name="npc_show_rel_bars_long" text="Beziehungsfortschrittsbalken beim Gespräch mit NPCs anzeigen" />
+		<text name="npc_show_map_markers_short" text="Kartenmarkierungen anzeigen" />
+		<text name="npc_show_map_markers_long" text="NPC-Standortmarkierungen auf der Karte anzeigen" />
+		<text name="npc_enable_gifts_short" text="Geschenke aktivieren" />
+		<text name="npc_enable_gifts_long" text="Geschenke an NPCs erlauben um Beziehungen zu verbessern" />
+		<text name="npc_allow_multi_favors_short" text="Mehrere Gefallen erlauben" />
+		<text name="npc_allow_multi_favors_long" text="Mehrere Gefallen gleichzeitig annehmen erlauben" />
+		<text name="npc_max_active_favors_short" text="Max. aktive Gefallen" />
+		<text name="npc_max_active_favors_long" text="Maximale Anzahl gleichzeitig aktiver Gefallen" />
+		<text name="npc_rel_decay_short" text="Beziehungsverfall" />
+		<text name="npc_rel_decay_long" text="Beziehungen nehmen langsam ab wenn sie nicht gepflegt werden" />
+		<text name="npc_reset" text="NPC-System zurücksetzen" />
+		<text name="npc_favor_management_title" text="Aktive Gefallen (%d)" />
+		<text name="npc_favor_management_footer" text="Gefallen abbrechen reduziert Beziehung um 10  |  Abschließen zum manuellen Beenden" />
+		<text name="button_view" text="Ansehen" />
+		<text name="button_goto" text="Gehe zu" />
+		<text name="button_complete" text="Abschließen" />
+		<text name="input_FAVOR_MENU" text="Gefallen-Menü" />
+		<text name="input_NPC_LIST" text="NPC-Liste" />
 	</texts>
 </l10n>

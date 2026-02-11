@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Favores activos:" />
 		<text name="npc_hud_and_more" text="...y %d más" />
 		<text name="npc_interact_talk_to" text="Hablar con %s" />
+		<text name="npc_display_section" text="Pantalla" />
+		<text name="npc_gameplay_section" text="Jugabilidad" />
+		<text name="npc_debug_section" text="Depuración" />
+		<text name="npc_show_favor_list_short" text="Mostrar lista favores" />
+		<text name="npc_show_favor_list_long" text="Mostrar la lista de favores activos en el HUD" />
+		<text name="npc_show_rel_bars_short" text="Mostrar barras relación" />
+		<text name="npc_show_rel_bars_long" text="Mostrar barras de progreso de relación al hablar con NPC" />
+		<text name="npc_show_map_markers_short" text="Mostrar marcadores mapa" />
+		<text name="npc_show_map_markers_long" text="Mostrar marcadores de ubicación NPC en el mapa" />
+		<text name="npc_enable_gifts_short" text="Activar regalos" />
+		<text name="npc_enable_gifts_long" text="Permitir dar regalos a NPC para mejorar relaciones" />
+		<text name="npc_allow_multi_favors_short" text="Permitir favores múltiples" />
+		<text name="npc_allow_multi_favors_long" text="Permitir aceptar múltiples favores al mismo tiempo" />
+		<text name="npc_max_active_favors_short" text="Máx. favores activos" />
+		<text name="npc_max_active_favors_long" text="Número máximo de favores activos simultáneamente" />
+		<text name="npc_rel_decay_short" text="Deterioro relación" />
+		<text name="npc_rel_decay_long" text="Las relaciones disminuyen lentamente si no se mantienen" />
+		<text name="npc_reset" text="Restablecer sistema NPC" />
+		<text name="npc_favor_management_title" text="Favores activos (%d)" />
+		<text name="npc_favor_management_footer" text="Cancelar favor reduce la relación en 10  |  Completar para terminar manualmente" />
+		<text name="button_view" text="Ver" />
+		<text name="button_goto" text="Ir a" />
+		<text name="button_complete" text="Completar" />
+		<text name="input_FAVOR_MENU" text="Menú de favores" />
+		<text name="input_NPC_LIST" text="Lista NPC" />
 	</texts>
 </l10n>

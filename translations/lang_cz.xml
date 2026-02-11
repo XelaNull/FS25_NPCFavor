@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Aktivní laskavosti:" />
 		<text name="npc_hud_and_more" text="...a %d dalších" />
 		<text name="npc_interact_talk_to" text="Promluvit s %s" />
+		<text name="npc_display_section" text="Zobrazení" />
+		<text name="npc_gameplay_section" text="Hratelnost" />
+		<text name="npc_debug_section" text="Ladění" />
+		<text name="npc_show_favor_list_short" text="Zobrazit seznam laskavostí" />
+		<text name="npc_show_favor_list_long" text="Zobrazit seznam aktivních laskavostí na HUD" />
+		<text name="npc_show_rel_bars_short" text="Zobrazit ukazatele vztahů" />
+		<text name="npc_show_rel_bars_long" text="Zobrazit ukazatele průběhu vztahů při rozhovoru s NPC" />
+		<text name="npc_show_map_markers_short" text="Zobrazit značky na mapě" />
+		<text name="npc_show_map_markers_long" text="Zobrazit značky polohy NPC na mapě" />
+		<text name="npc_enable_gifts_short" text="Povolit dárky" />
+		<text name="npc_enable_gifts_long" text="Povolit dávání dárků NPC pro zlepšení vztahů" />
+		<text name="npc_allow_multi_favors_short" text="Povolit více laskavostí" />
+		<text name="npc_allow_multi_favors_long" text="Povolit přijetí více laskavostí současně" />
+		<text name="npc_max_active_favors_short" text="Max. aktivních laskavostí" />
+		<text name="npc_max_active_favors_long" text="Maximální počet současně aktivních laskavostí" />
+		<text name="npc_rel_decay_short" text="Úpadek vztahů" />
+		<text name="npc_rel_decay_long" text="Vztahy se pomalu zhoršují pokud nejsou udržovány" />
+		<text name="npc_reset" text="Resetovat systém NPC" />
+		<text name="npc_favor_management_title" text="Aktivní laskavosti (%d)" />
+		<text name="npc_favor_management_footer" text="Zrušení laskavosti sníží vztah o 10  |  Dokončit pro ruční ukončení" />
+		<text name="button_view" text="Zobrazit" />
+		<text name="button_goto" text="Jít na" />
+		<text name="button_complete" text="Dokončit" />
+		<text name="input_FAVOR_MENU" text="Menu laskavostí" />
+		<text name="input_NPC_LIST" text="Seznam NPC" />
 	</texts>
 </l10n>

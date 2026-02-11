@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Favores ativos:" />
 		<text name="npc_hud_and_more" text="...e %d mais" />
 		<text name="npc_interact_talk_to" text="Falar com %s" />
+		<text name="npc_display_section" text="Exibição" />
+		<text name="npc_gameplay_section" text="Jogabilidade" />
+		<text name="npc_debug_section" text="Depuração" />
+		<text name="npc_show_favor_list_short" text="Mostrar lista favores" />
+		<text name="npc_show_favor_list_long" text="Mostrar lista de favores ativos no HUD" />
+		<text name="npc_show_rel_bars_short" text="Mostrar barras relação" />
+		<text name="npc_show_rel_bars_long" text="Mostrar barras de progresso de relação ao falar com NPC" />
+		<text name="npc_show_map_markers_short" text="Mostrar marcadores mapa" />
+		<text name="npc_show_map_markers_long" text="Mostrar marcadores de localização NPC no mapa" />
+		<text name="npc_enable_gifts_short" text="Ativar presentes" />
+		<text name="npc_enable_gifts_long" text="Permitir dar presentes a NPC para melhorar relações" />
+		<text name="npc_allow_multi_favors_short" text="Permitir favores múltiplos" />
+		<text name="npc_allow_multi_favors_long" text="Permitir aceitar múltiplos favores ao mesmo tempo" />
+		<text name="npc_max_active_favors_short" text="Máx. favores ativos" />
+		<text name="npc_max_active_favors_long" text="Número máximo de favores ativos simultaneamente" />
+		<text name="npc_rel_decay_short" text="Deterioração relação" />
+		<text name="npc_rel_decay_long" text="Relações diminuem lentamente se não forem mantidas" />
+		<text name="npc_reset" text="Restaurar sistema NPC" />
+		<text name="npc_favor_management_title" text="Favores ativos (%d)" />
+		<text name="npc_favor_management_footer" text="Cancelar favor reduz relacionamento em 10  |  Complete para terminar manualmente" />
+		<text name="button_view" text="Ver" />
+		<text name="button_goto" text="Ir para" />
+		<text name="button_complete" text="Completar" />
+		<text name="input_FAVOR_MENU" text="Menu de favores" />
+		<text name="input_NPC_LIST" text="Lista NPC" />
 	</texts>
 </l10n>

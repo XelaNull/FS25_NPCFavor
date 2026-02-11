@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Aktywne przysługi:" />
 		<text name="npc_hud_and_more" text="...i %d więcej" />
 		<text name="npc_interact_talk_to" text="Porozmawiaj z %s" />
+		<text name="npc_display_section" text="Wyświetlanie" />
+		<text name="npc_gameplay_section" text="Rozgrywka" />
+		<text name="npc_debug_section" text="Debugowanie" />
+		<text name="npc_show_favor_list_short" text="Pokazuj listę przysług" />
+		<text name="npc_show_favor_list_long" text="Pokaż listę aktywnych przysług na HUD" />
+		<text name="npc_show_rel_bars_short" text="Pokazuj paski relacji" />
+		<text name="npc_show_rel_bars_long" text="Pokaż paski postępu relacji podczas rozmów z NPC" />
+		<text name="npc_show_map_markers_short" text="Pokazuj znaczniki mapy" />
+		<text name="npc_show_map_markers_long" text="Pokaż znaczniki lokalizacji NPC na mapie" />
+		<text name="npc_enable_gifts_short" text="Włącz prezenty" />
+		<text name="npc_enable_gifts_long" text="Pozwól na dawanie prezentów NPC aby poprawić relacje" />
+		<text name="npc_allow_multi_favors_short" text="Pozwól na wiele przysług" />
+		<text name="npc_allow_multi_favors_long" text="Pozwól na przyjmowanie wielu przysług jednocześnie" />
+		<text name="npc_max_active_favors_short" text="Maks. aktywnych przysług" />
+		<text name="npc_max_active_favors_long" text="Maksymalna liczba jednoczesnych aktywnych przysług" />
+		<text name="npc_rel_decay_short" text="Zanik relacji" />
+		<text name="npc_rel_decay_long" text="Relacje powoli słabną jeśli nie są podtrzymywane" />
+		<text name="npc_reset" text="Resetuj system NPC" />
+		<text name="npc_favor_management_title" text="Aktywne przysługi (%d)" />
+		<text name="npc_favor_management_footer" text="Anulowanie przysługi zmniejsza relację o 10  |  Ukończ, aby zakończyć ręcznie" />
+		<text name="button_view" text="Zobacz" />
+		<text name="button_goto" text="Idź do" />
+		<text name="button_complete" text="Ukończ" />
+		<text name="input_FAVOR_MENU" text="Menu przysług" />
+		<text name="input_NPC_LIST" text="Lista NPC" />
 	</texts>
 </l10n>

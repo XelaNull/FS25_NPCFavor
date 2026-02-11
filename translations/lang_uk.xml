@@ -116,5 +116,30 @@
 		<text name="npc_hud_active_favors" text="Активні послуги:" />
 		<text name="npc_hud_and_more" text="...і ще %d" />
 		<text name="npc_interact_talk_to" text="Поговорити з %s" />
+		<text name="npc_display_section" text="Відображення" />
+		<text name="npc_gameplay_section" text="Геймплей" />
+		<text name="npc_debug_section" text="Налагодження" />
+		<text name="npc_show_favor_list_short" text="Показувати список послуг" />
+		<text name="npc_show_favor_list_long" text="Показувати список активних послуг на HUD" />
+		<text name="npc_show_rel_bars_short" text="Показувати смужки відносин" />
+		<text name="npc_show_rel_bars_long" text="Показувати смужки прогресу відносин під час розмови з NPC" />
+		<text name="npc_show_map_markers_short" text="Показувати маркери на карті" />
+		<text name="npc_show_map_markers_long" text="Показувати маркери розташування NPC на карті" />
+		<text name="npc_enable_gifts_short" text="Увімкнути подарунки" />
+		<text name="npc_enable_gifts_long" text="Дозволити дарувати подарунки NPC для покращення відносин" />
+		<text name="npc_allow_multi_favors_short" text="Дозволити кілька послуг" />
+		<text name="npc_allow_multi_favors_long" text="Дозволити приймати кілька послуг одночасно" />
+		<text name="npc_max_active_favors_short" text="Макс. активних послуг" />
+		<text name="npc_max_active_favors_long" text="Максимальна кількість одночасно активних послуг" />
+		<text name="npc_rel_decay_short" text="Занепад відносин" />
+		<text name="npc_rel_decay_long" text="Відносини повільно погіршуються якщо їх не підтримувати" />
+		<text name="npc_reset" text="Скинути систему NPC" />
+		<text name="npc_favor_management_title" text="Активні послуги (%d)" />
+		<text name="npc_favor_management_footer" text="Скасування послуги зменшує відносини на 10  |  Завершити для ручного закінчення" />
+		<text name="button_view" text="Переглянути" />
+		<text name="button_goto" text="Перейти до" />
+		<text name="button_complete" text="Завершити" />
+		<text name="input_FAVOR_MENU" text="Меню послуг" />
+		<text name="input_NPC_LIST" text="Список NPC" />
 	</texts>
 </l10n>
