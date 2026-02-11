@@ -133,7 +133,6 @@
 		<text name="npc_max_active_favors_long" text="Número máximo de favores activos simultáneamente" />
 		<text name="npc_rel_decay_short" text="Deterioro relación" />
 		<text name="npc_rel_decay_long" text="Las relaciones disminuyen lentamente si no se mantienen" />
-		<text name="npc_reset" text="Restablecer sistema NPC" />
 		<text name="npc_favor_management_title" text="Favores activos (%d)" />
 		<text name="npc_favor_management_footer" text="Cancelar favor reduce la relación en 10  |  Completar para terminar manualmente" />
 		<text name="button_view" text="Ver" />

@@ -133,7 +133,6 @@
 		<text name="npc_max_active_favors_long" text="Nombre maximum de faveurs actives simultanément" />
 		<text name="npc_rel_decay_short" text="Déclin relation" />
 		<text name="npc_rel_decay_long" text="Les relations diminuent lentement si elles ne sont pas entretenues" />
-		<text name="npc_reset" text="Réinitialiser système PNJ" />
 		<text name="npc_favor_management_title" text="Faveurs actives (%d)" />
 		<text name="npc_favor_management_footer" text="Annuler la faveur réduit la relation de 10  |  Terminer pour finir manuellement" />
 		<text name="button_view" text="Voir" />

@@ -133,7 +133,6 @@
 		<text name="npc_max_active_favors_long" text="Максимальна кількість одночасно активних послуг" />
 		<text name="npc_rel_decay_short" text="Занепад відносин" />
 		<text name="npc_rel_decay_long" text="Відносини повільно погіршуються якщо їх не підтримувати" />
-		<text name="npc_reset" text="Скинути систему NPC" />
 		<text name="npc_favor_management_title" text="Активні послуги (%d)" />
 		<text name="npc_favor_management_footer" text="Скасування послуги зменшує відносини на 10  |  Завершити для ручного закінчення" />
 		<text name="button_view" text="Переглянути" />

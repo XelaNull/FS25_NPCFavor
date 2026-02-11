@@ -133,7 +133,6 @@
 		<text name="npc_max_active_favors_long" text="Maximální počet současně aktivních laskavostí" />
 		<text name="npc_rel_decay_short" text="Úpadek vztahů" />
 		<text name="npc_rel_decay_long" text="Vztahy se pomalu zhoršují pokud nejsou udržovány" />
-		<text name="npc_reset" text="Resetovat systém NPC" />
 		<text name="npc_favor_management_title" text="Aktivní laskavosti (%d)" />
 		<text name="npc_favor_management_footer" text="Zrušení laskavosti sníží vztah o 10  |  Dokončit pro ruční ukončení" />
 		<text name="button_view" text="Zobrazit" />

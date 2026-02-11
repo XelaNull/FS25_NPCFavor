@@ -133,7 +133,6 @@
 		<text name="npc_max_active_favors_long" text="Maximale Anzahl gleichzeitig aktiver Gefallen" />
 		<text name="npc_rel_decay_short" text="Beziehungsverfall" />
 		<text name="npc_rel_decay_long" text="Beziehungen nehmen langsam ab wenn sie nicht gepflegt werden" />
-		<text name="npc_reset" text="NPC-System zurücksetzen" />
 		<text name="npc_favor_management_title" text="Aktive Gefallen (%d)" />
 		<text name="npc_favor_management_footer" text="Gefallen abbrechen reduziert Beziehung um 10  |  Abschließen zum manuellen Beenden" />
 		<text name="button_view" text="Ansehen" />

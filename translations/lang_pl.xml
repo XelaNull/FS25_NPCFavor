@@ -133,7 +133,6 @@
 		<text name="npc_max_active_favors_long" text="Maksymalna liczba jednoczesnych aktywnych przysług" />
 		<text name="npc_rel_decay_short" text="Zanik relacji" />
 		<text name="npc_rel_decay_long" text="Relacje powoli słabną jeśli nie są podtrzymywane" />
-		<text name="npc_reset" text="Resetuj system NPC" />
 		<text name="npc_favor_management_title" text="Aktywne przysługi (%d)" />
 		<text name="npc_favor_management_footer" text="Anulowanie przysługi zmniejsza relację o 10  |  Ukończ, aby zakończyć ręcznie" />
 		<text name="button_view" text="Zobacz" />

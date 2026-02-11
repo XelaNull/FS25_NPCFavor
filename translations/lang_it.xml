@@ -133,7 +133,6 @@
 		<text name="npc_max_active_favors_long" text="Numero massimo di favori attivi contemporaneamente" />
 		<text name="npc_rel_decay_short" text="Decadimento relazione" />
 		<text name="npc_rel_decay_long" text="Le relazioni diminuiscono lentamente se non mantenute" />
-		<text name="npc_reset" text="Ripristina sistema NPC" />
 		<text name="npc_favor_management_title" text="Favori attivi (%d)" />
 		<text name="npc_favor_management_footer" text="Annullare il favore riduce la relazione di 10  |  Completa per finire manualmente" />
 		<text name="button_view" text="Vedi" />
