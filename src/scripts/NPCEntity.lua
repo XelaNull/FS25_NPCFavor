@@ -1900,35 +1900,16 @@ function NPCEntity:createMapHotspot(entity, npc)
         local name = (npc and npc.name) or "NPC"
         local hotspot = PlaceableHotspot.new()
 
-        -- CRITICAL: Call the superclass new() which initializes the overlay
-        -- PlaceableHotspot extends MapHotspot, need to ensure proper init chain
-        if hotspot.setPlaceableType then
-            hotspot:setPlaceableType(PlaceableHotspot.TYPE.EXCLAMATION_MARK)
-        else
-            -- Manual initialization if setPlaceableType doesn't exist
-            hotspot.placeableType = PlaceableHotspot.TYPE.EXCLAMATION_MARK
-            
-            -- Try to initialize overlay manually
-            if hotspot.createMapIcon then
-                hotspot:createMapIcon()
-            end
-        end
-        
-        -- Double-check overlay exists before proceeding
-        if not hotspot.overlay then
-            print("[NPCEntity] WARNING: Hotspot overlay still nil after init for " .. name)
-            return -- Abort hotspot creation
-        end
+        -- Use built-in exclamation mark icon. Custom icon.dds via Overlay.new
+        -- fails when the mod runs from a ZIP (DirectStorage can't resolve the
+        -- path outside mission-load context). The built-in type icon works reliably.
+        hotspot.placeableType = PlaceableHotspot.TYPE.EXCLAMATION_MARK
 
         -- Set display name (setName for hover tooltip)
-        if hotspot.setName then
-            hotspot:setName(name)
-        end
+        hotspot:setName(name)
 
         -- Set initial world position
-        if hotspot.setWorldPosition then
-            hotspot:setWorldPosition(entity.position.x, entity.position.z)
-        end
+        hotspot:setWorldPosition(entity.position.x, entity.position.z)
 
         -- Make visible to all players/farms
         if hotspot.setOwnerFarmId then
@@ -1937,10 +1918,6 @@ function NPCEntity:createMapHotspot(entity, npc)
 
         g_currentMission:addMapHotspot(hotspot)
         entity.mapHotspot = hotspot
-        
-        if self.npcSystem and self.npcSystem.settings and self.npcSystem.settings.debugMode then
-            print("[NPCEntity] Hotspot created successfully for " .. name .. " (overlay=" .. tostring(hotspot.overlay ~= nil) .. ")")
-        end
     end)
 
     if not ok then
