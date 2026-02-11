@@ -32,7 +32,7 @@
 -- =========================================================
 
 -- =========================================================
--- FS25 NPC Favor Mod (version 1.2.2.3)
+-- FS25 NPC Favor Mod (version 1.2.2.5)
 -- =========================================================
 -- Living NPC Neighborhood System
 -- =========================================================
@@ -46,7 +46,7 @@
 -- =========================================================
 
 -- Add version tracking
-local MOD_VERSION = "1.2.2.4"
+local MOD_VERSION = "1.2.2.5"
 local MOD_NAME = "FS25_NPCFavor"
 
 local modDirectory = g_currentModDirectory
