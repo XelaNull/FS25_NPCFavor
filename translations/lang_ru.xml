@@ -140,5 +140,24 @@
 		<text name="button_complete" text="Завершить" />
 		<text name="input_FAVOR_MENU" text="Меню услуг" />
 		<text name="input_NPC_LIST" text="Список NPC" />
+			<text name="npc_schedule_plans" text="Мои планы:" />
+		<text name="input_HUD_EDIT_MODE" text="Редактировать HUD" />
+		<text name="npc_hud_drag_hint" text="Перетащите для перемещения" />
+		<text name="npc_hud_locked_short" text="Заблокировать HUD услуг" />
+		<text name="npc_hud_locked_long" text="Когда заблокировано, список услуг нельзя перемещать клавишей F8" />
+		<text name="npc_hud_scale_short" text="Размер HUD услуг" />
+		<text name="npc_hud_scale_long" text="Размер списка активных услуг на экране" />
+		<text name="npc_admin_title" text="Админ-панель NPC" />
+		<text name="npc_admin_subtitle_fmt" text="%d активных NPC  |  Нажмите Редактировать для настройки" />
+		<text name="npc_admin_no_npcs" text="Нет активных NPC. NPC появятся после инициализации." />
+		<text name="npc_admin_footer" text="Нажмите Редактировать для настройки значений отношений" />
+		<text name="npc_admin_edit_title" text="Редактировать NPC: %s" />
+		<text name="npc_admin_relationship_label" text="Отношения:" />
+		<text name="npc_admin_increase" text="Увеличить отношения" />
+		<text name="npc_admin_decrease" text="Уменьшить отношения" />
+		<text name="npc_admin_adjusted" text="Настроено: %s%d (сейчас %d/100)" />
+		<text name="npc_admin_back" text="Назад" />
+		<text name="npc_admin_edit" text="Ред." />
+		<text name="npc_admin_col_personality" text="Личность" />
 	</texts>
 </l10n>

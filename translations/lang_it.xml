@@ -140,5 +140,24 @@
 		<text name="button_complete" text="Completa" />
 		<text name="input_FAVOR_MENU" text="Menu favori" />
 		<text name="input_NPC_LIST" text="Lista NPC" />
+			<text name="npc_schedule_plans" text="I miei piani:" />
+		<text name="input_HUD_EDIT_MODE" text="Modifica HUD" />
+		<text name="npc_hud_drag_hint" text="Trascina per spostare" />
+		<text name="npc_hud_locked_short" text="Blocca HUD favori" />
+		<text name="npc_hud_locked_long" text="Quando bloccato, la lista favori non può essere spostata con F8" />
+		<text name="npc_hud_scale_short" text="Dimensione HUD favori" />
+		<text name="npc_hud_scale_long" text="Dimensione della lista favori attivi sullo schermo" />
+		<text name="npc_admin_title" text="Pannello Admin NPC" />
+		<text name="npc_admin_subtitle_fmt" text="%d NPC attivi  |  Clicca Modifica per regolare" />
+		<text name="npc_admin_no_npcs" text="Nessun NPC attivo. Gli NPC appariranno dopo l'inizializzazione." />
+		<text name="npc_admin_footer" text="Clicca Modifica per regolare i valori di relazione" />
+		<text name="npc_admin_edit_title" text="Modifica NPC: %s" />
+		<text name="npc_admin_relationship_label" text="Relazione:" />
+		<text name="npc_admin_increase" text="Aumenta relazione" />
+		<text name="npc_admin_decrease" text="Diminuisci relazione" />
+		<text name="npc_admin_adjusted" text="Regolato: %s%d (ora %d/100)" />
+		<text name="npc_admin_back" text="Indietro" />
+		<text name="npc_admin_edit" text="Modifica" />
+		<text name="npc_admin_col_personality" text="Personalità" />
 	</texts>
 </l10n>

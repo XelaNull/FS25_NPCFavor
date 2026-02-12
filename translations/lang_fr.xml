@@ -140,5 +140,24 @@
 		<text name="button_complete" text="Terminer" />
 		<text name="input_FAVOR_MENU" text="Menu des faveurs" />
 		<text name="input_NPC_LIST" text="Liste PNJ" />
+			<text name="npc_schedule_plans" text="Mes projets :" />
+		<text name="input_HUD_EDIT_MODE" text="Modifier le HUD" />
+		<text name="npc_hud_drag_hint" text="Glisser pour déplacer" />
+		<text name="npc_hud_locked_short" text="Verrouiller le HUD" />
+		<text name="npc_hud_locked_long" text="Quand verrouillé, la liste des faveurs ne peut pas être déplacée avec F8" />
+		<text name="npc_hud_scale_short" text="Taille du HUD" />
+		<text name="npc_hud_scale_long" text="Taille de la liste des faveurs actives à l'écran" />
+		<text name="npc_admin_title" text="Panneau Admin PNJ" />
+		<text name="npc_admin_subtitle_fmt" text="%d PNJ actifs  |  Cliquez Modifier pour ajuster" />
+		<text name="npc_admin_no_npcs" text="Aucun PNJ actif. Les PNJ apparaîtront après l'initialisation." />
+		<text name="npc_admin_footer" text="Cliquez Modifier pour ajuster les valeurs de relation" />
+		<text name="npc_admin_edit_title" text="Modifier PNJ: %s" />
+		<text name="npc_admin_relationship_label" text="Relation:" />
+		<text name="npc_admin_increase" text="Augmenter la relation" />
+		<text name="npc_admin_decrease" text="Diminuer la relation" />
+		<text name="npc_admin_adjusted" text="Ajusté: %s%d (maintenant %d/100)" />
+		<text name="npc_admin_back" text="Retour" />
+		<text name="npc_admin_edit" text="Modifier" />
+		<text name="npc_admin_col_personality" text="Personnalité" />
 	</texts>
 </l10n>

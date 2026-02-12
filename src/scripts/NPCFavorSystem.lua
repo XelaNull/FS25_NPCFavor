@@ -1239,7 +1239,7 @@ function NPCFavorSystem:restoreFavor(savedFavor)
         estimatedCompletionTime = nil,
 
         requirements = favorType and favorType.requirements or {},
-        reward = favorType and favorType.reward or { relationship = 10, money = savedFavor.reward or 0, xp = 0 },
+        reward = favorType and favorType.reward or (type(savedFavor.reward) == "table" and savedFavor.reward or { relationship = 10, money = tonumber(savedFavor.reward) or 0, xp = 0 }),
         penalty = favorType and favorType.penalty or { relationship = -5, reputation = -10 },
 
         location = nil,

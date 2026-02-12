@@ -140,5 +140,24 @@
 		<text name="button_complete" text="Ukończ" />
 		<text name="input_FAVOR_MENU" text="Menu przysług" />
 		<text name="input_NPC_LIST" text="Lista NPC" />
+			<text name="npc_schedule_plans" text="Moje plany:" />
+		<text name="input_HUD_EDIT_MODE" text="Edytuj HUD" />
+		<text name="npc_hud_drag_hint" text="Przeciągnij, aby przesunąć" />
+		<text name="npc_hud_locked_short" text="Zablokuj HUD przysług" />
+		<text name="npc_hud_locked_long" text="Gdy zablokowany, lista przysług nie może być przesuwana klawiszem F8" />
+		<text name="npc_hud_scale_short" text="Rozmiar HUD przysług" />
+		<text name="npc_hud_scale_long" text="Rozmiar listy aktywnych przysług na ekranie" />
+		<text name="npc_admin_title" text="Panel admina NPC" />
+		<text name="npc_admin_subtitle_fmt" text="%d aktywnych NPC  |  Kliknij Edytuj, aby dostosować" />
+		<text name="npc_admin_no_npcs" text="Brak aktywnych NPC. NPC pojawią się po inicjalizacji." />
+		<text name="npc_admin_footer" text="Kliknij Edytuj, aby dostosować wartości relacji NPC" />
+		<text name="npc_admin_edit_title" text="Edytuj NPC: %s" />
+		<text name="npc_admin_relationship_label" text="Relacja:" />
+		<text name="npc_admin_increase" text="Zwiększ relację" />
+		<text name="npc_admin_decrease" text="Zmniejsz relację" />
+		<text name="npc_admin_adjusted" text="Dostosowano: %s%d (teraz %d/100)" />
+		<text name="npc_admin_back" text="Wstecz" />
+		<text name="npc_admin_edit" text="Edytuj" />
+		<text name="npc_admin_col_personality" text="Osobowość" />
 	</texts>
 </l10n>
