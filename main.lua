@@ -435,34 +435,28 @@ local function hookNPCInteractInput()
         npcInteractOriginalFunc(inputComponent, ...)
 
         if inputComponent.player ~= nil and inputComponent.player.isOwner then
-            local actionId = InputAction.NPC_INTERACT
-            if actionId == nil then
-                print("[NPC Favor] InputAction.NPC_INTERACT not found")
-                return
-            end
-
             g_inputBinding:beginActionEventsModification(PlayerInputComponent.INPUT_CONTEXT_NAME)
 
-            local success, eventId = g_inputBinding:registerActionEvent(
-                actionId,
-                NPCSystem,                   -- Target object (static reference)
-                npcInteractActionCallback,    -- Callback function
-                false,                        -- triggerUp
-                true,                         -- triggerDown
-                false,                        -- triggerAlways
-                false,                        -- startActive (MUST be false)
-                nil,                          -- callbackState
-                true                          -- disableConflictingBindings
-            )
-
-            g_inputBinding:endActionEventsModification()
-
-            if success and eventId ~= nil then
-                npcInteractActionEventId = eventId
+            -- Register E: NPC Interact
+            local actionId = InputAction.NPC_INTERACT
+            if actionId ~= nil then
+                local success, eventId = g_inputBinding:registerActionEvent(
+                    actionId,
+                    NPCSystem,                   -- Target object (static reference)
+                    npcInteractActionCallback,    -- Callback function
+                    false,                        -- triggerUp
+                    true,                         -- triggerDown
+                    false,                        -- triggerAlways
+                    false,                        -- startActive (MUST be false)
+                    nil,                          -- callbackState
+                    true                          -- disableConflictingBindings
+                )
+                if success and eventId ~= nil then
+                    npcInteractActionEventId = eventId
+                end
             end
-        end
 
-        -- Register F6: Favor Menu
+            -- Register F6: Favor Menu
             local favorMenuActionId = InputAction.FAVOR_MENU
             if favorMenuActionId ~= nil then
                 local success, eventId = g_inputBinding:registerActionEvent(
@@ -497,7 +491,6 @@ local function hookNPCInteractInput()
             -- Register Right-click: HUD Edit Mode
             local hudEditActionId = InputAction.HUD_EDIT_MODE
             if hudEditActionId ~= nil then
-                print("[NPC Favor] Registering HUD_EDIT_MODE action event...")
                 local success, eventId = g_inputBinding:registerActionEvent(
                     hudEditActionId,
                     NPCSystem,
@@ -508,13 +501,11 @@ local function hookNPCInteractInput()
                     hudEditModeActionEventId = eventId
                     g_inputBinding:setActionEventTextPriority(eventId, GS_PRIO_NORMAL)
                     g_inputBinding:setActionEventText(eventId, g_i18n:getText("input_HUD_EDIT_MODE") or "Toggle HUD Edit")
-                    print("[NPC Favor] HUD_EDIT_MODE registered OK, eventId=" .. tostring(eventId))
-                else
-                    print("[NPC Favor] HUD_EDIT_MODE registration FAILED: success=" .. tostring(success) .. " eventId=" .. tostring(eventId))
                 end
-            else
-                print("[NPC Favor] HUD_EDIT_MODE action not found in InputAction table")
             end
+
+            g_inputBinding:endActionEventsModification()
+        end
     end
 
 end
