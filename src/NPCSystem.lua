@@ -342,8 +342,9 @@ function NPCSystem:onMissionLoaded()
                 -- Show notification
                 if self.settings.showNotifications then
                     if g_currentMission and g_currentMission.hud then
+                        local ver = (g_NPCFavorMod and g_NPCFavorMod.version) or "?"
                         g_currentMission.hud:showBlinkingWarning(
-                            "[NPC Favor] Mod loaded - Type 'npcHelp' for commands",
+                            "NPC Favor v" .. ver .. " loaded - Type 'npcHelp' for commands",
                             8000
                         )
                     end
@@ -2545,11 +2546,13 @@ function NPCSystem:showNotification(title, message)
     if not self.settings.showNotifications then
         return
     end
-    
-    -- Use game notification system if available
-    if g_currentMission and g_currentMission.inGameMenu and g_currentMission.inGameMenu.messageCenter then
-        g_currentMission.inGameMenu.messageCenter:addMissionMessage(message, title, nil, nil, nil)
-    elseif self.settings.debugMode then
+
+    -- Route to HUD flash instead of game's messageCenter
+    if self.favorHUD then
+        self.favorHUD:flashFavor(message, {1, 0.9, 0.3, 1})
+    end
+
+    if self.settings.debugMode then
         print(string.format("[NPC Favor] %s: %s", title, message))
     end
 end

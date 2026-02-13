@@ -110,7 +110,9 @@ end
 function NPCFavorManagementDialog:clearFavorRow(rowNum)
     local prefix = "favor" .. rowNum
     
-    -- Hide background
+    -- Hide background and border
+    local border = self[prefix .. "border"]
+    if border and border.setVisible then border:setVisible(false) end
     local bg = self[prefix .. "bg"]
     if bg and bg.setVisible then bg:setVisible(false) end
     
@@ -143,7 +145,9 @@ function NPCFavorManagementDialog:fillFavorRow(rowNum, favor, sys)
     -- Store favor reference
     self.favorIndices[rowNum] = favor
     
-    -- Show background
+    -- Show background and border
+    local border = self[prefix .. "border"]
+    if border and border.setVisible then border:setVisible(true) end
     local bg = self[prefix .. "bg"]
     if bg and bg.setVisible then bg:setVisible(true) end
     

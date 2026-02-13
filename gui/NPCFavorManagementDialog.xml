@@ -23,6 +23,7 @@
             <Bitmap profile="fmDivider" position="0px -54px"/>
 
             <!-- ===== FAVOR ROW 1 ===== -->
+            <Bitmap profile="fmRowBorder" id="favor1border" position="0px -68px" visible="false"/>
             <Bitmap profile="fmRowBg" id="favor1bg" position="0px -70px" visible="false"/>
             <Text profile="fmNPCName" id="favor1npc" position="-110px -75px" text="" visible="false"/>
             <Text profile="fmDesc" id="favor1desc" position="-110px -95px" text="" visible="false"/>
@@ -46,6 +47,7 @@
             <Text   profile="fmGreenText" id="favor1completetxt" position="385px -106px" text="Done" visible="false"/>
 
             <!-- ===== FAVOR ROW 2 ===== -->
+            <Bitmap profile="fmRowBorder" id="favor2border" position="0px -153px" visible="false"/>
             <Bitmap profile="fmRowBg" id="favor2bg" position="0px -155px" visible="false"/>
             <Text profile="fmNPCName" id="favor2npc" position="-110px -160px" text="" visible="false"/>
             <Text profile="fmDesc" id="favor2desc" position="-110px -180px" text="" visible="false"/>
@@ -69,6 +71,7 @@
             <Text   profile="fmGreenText" id="favor2completetxt" position="385px -191px" text="Done" visible="false"/>
 
             <!-- ===== FAVOR ROW 3 ===== -->
+            <Bitmap profile="fmRowBorder" id="favor3border" position="0px -238px" visible="false"/>
             <Bitmap profile="fmRowBg" id="favor3bg" position="0px -240px" visible="false"/>
             <Text profile="fmNPCName" id="favor3npc" position="-110px -245px" text="" visible="false"/>
             <Text profile="fmDesc" id="favor3desc" position="-110px -265px" text="" visible="false"/>
@@ -92,6 +95,7 @@
             <Text   profile="fmGreenText" id="favor3completetxt" position="385px -276px" text="Done" visible="false"/>
 
             <!-- ===== FAVOR ROW 4 ===== -->
+            <Bitmap profile="fmRowBorder" id="favor4border" position="0px -323px" visible="false"/>
             <Bitmap profile="fmRowBg" id="favor4bg" position="0px -325px" visible="false"/>
             <Text profile="fmNPCName" id="favor4npc" position="-110px -330px" text="" visible="false"/>
             <Text profile="fmDesc" id="favor4desc" position="-110px -350px" text="" visible="false"/>
@@ -115,6 +119,7 @@
             <Text   profile="fmGreenText" id="favor4completetxt" position="385px -361px" text="Done" visible="false"/>
 
             <!-- ===== FAVOR ROW 5 ===== -->
+            <Bitmap profile="fmRowBorder" id="favor5border" position="0px -408px" visible="false"/>
             <Bitmap profile="fmRowBg" id="favor5bg" position="0px -410px" visible="false"/>
             <Text profile="fmNPCName" id="favor5npc" position="-110px -415px" text="" visible="false"/>
             <Text profile="fmDesc" id="favor5desc" position="-110px -435px" text="" visible="false"/>
@@ -174,7 +179,13 @@
         <!-- ===== DIVIDERS ===== -->
         <Profile name="fmDivider" extends="baseReference" with="anchorTopCenter">
             <size value="850px 1px"/>
-            <imageColor value="0.25 0.3 0.35 0.8"/>
+            <imageColor value="0.3 0.38 0.45 0.8"/>
+        </Profile>
+
+        <!-- ===== FAVOR ROW BORDER (slightly larger, renders behind row bg) ===== -->
+        <Profile name="fmRowBorder" extends="baseReference" with="anchorTopCenter">
+            <size value="854px 84px"/>
+            <imageColor value="0.22 0.28 0.38 0.45"/>
         </Profile>
 
         <!-- ===== FAVOR ROW BACKGROUND ===== -->
