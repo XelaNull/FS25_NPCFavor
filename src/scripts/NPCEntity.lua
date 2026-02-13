@@ -997,7 +997,7 @@ function NPCEntity:loadAnimatedCharacterDirect(entity, npc)
                                     end
                                 end
 
-                                -- Adjust glasses nodes — raise by ~0.5 inch (0.012m)
+                                -- Adjust glasses nodes — raise by ~1 inch (0.025m)
                                 local glassNodes = findNodes(humanModel.rootNode, "glasses")
                                 if #glassNodes == 0 then
                                     glassNodes = findNodes(humanModel.rootNode, "facegear")
@@ -1005,10 +1005,10 @@ function NPCEntity:loadAnimatedCharacterDirect(entity, npc)
                                 for _, gl in ipairs(glassNodes) do
                                     local okT, gx, gy, gz = pcall(getTranslation, gl.node)
                                     if okT then
-                                        setTranslation(gl.node, gx, gy + 0.012, gz)
+                                        setTranslation(gl.node, gx, gy + 0.025, gz)
                                         if debug then
                                             print("[NPCEntity] Adjusted glasses node '" .. gl.name
-                                                .. "' Y: " .. tostring(gy) .. " -> " .. tostring(gy + 0.012))
+                                                .. "' Y: " .. tostring(gy) .. " -> " .. tostring(gy + 0.025))
                                         end
                                     end
                                 end

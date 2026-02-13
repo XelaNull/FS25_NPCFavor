@@ -46,7 +46,7 @@
 -- =========================================================
 
 -- Add version tracking
-local MOD_VERSION = "1.2.2.5"
+local MOD_VERSION = "1.2.2.6"
 local MOD_NAME = "FS25_NPCFavor"
 
 local modDirectory = g_currentModDirectory
@@ -79,6 +79,7 @@ if modDirectory then
     source(modDirectory .. "src/scripts/NPCFieldWork.lua")
     source(modDirectory .. "src/scripts/NPCScheduler.lua")
     source(modDirectory .. "src/scripts/NPCInteractionUI.lua")
+    source(modDirectory .. "src/scripts/NPCFavorHUD.lua")
     source(modDirectory .. "src/scripts/NPCTeleport.lua")
 
     -- GUI
@@ -86,6 +87,8 @@ if modDirectory then
     source(modDirectory .. "src/gui/NPCDialog.lua")
     source(modDirectory .. "src/gui/NPCListDialog.lua")
     source(modDirectory .. "src/gui/NPCFavorManagementDialog.lua")
+    source(modDirectory .. "src/gui/NPCAdminListDialog.lua")
+    source(modDirectory .. "src/gui/NPCAdminEditDialog.lua")
     source(modDirectory .. "src/settings/NPCFavorGUI.lua")
 
     -- Main coordinator
@@ -122,7 +125,9 @@ local function loadedMission(mission, node)
             DialogLoader.init(modDirectory)
             DialogLoader.register("NPCDialog", NPCDialog, "gui/NPCDialog.xml")
             DialogLoader.register("NPCListDialog", NPCListDialog, "gui/NPCListDialog.xml")
-            DialogLoader.register("NPCFavorManagementDialog", NPCFavorManagementDialog, "gui/NPCFavorManagementDialog.xml")  -- NEW
+            DialogLoader.register("NPCFavorManagementDialog", NPCFavorManagementDialog, "gui/NPCFavorManagementDialog.xml")
+            DialogLoader.register("NPCAdminListDialog", NPCAdminListDialog, "gui/NPCAdminListDialog.xml")
+            DialogLoader.register("NPCAdminEditDialog", NPCAdminEditDialog, "gui/NPCAdminEditDialog.xml")
 
             -- Eagerly load ALL dialogs while the mod's ZIP filesystem context
             -- is active.  Lazy loading later fails with "Failed to open xml file"
@@ -130,6 +135,8 @@ local function loadedMission(mission, node)
             DialogLoader.ensureLoaded("NPCDialog")
             DialogLoader.ensureLoaded("NPCListDialog")
             DialogLoader.ensureLoaded("NPCFavorManagementDialog")
+            DialogLoader.ensureLoaded("NPCAdminListDialog")
+            DialogLoader.ensureLoaded("NPCAdminEditDialog")
             npcSystem.npcDialogInstance = DialogLoader.getDialog("NPCDialog")
         end
 
@@ -305,6 +312,7 @@ local npcInteractActionEventId = nil
 local npcInteractOriginalFunc = nil
 local favorMenuActionEventId = nil     -- NEW for F6
 local npcListActionEventId = nil       -- NEW for F7
+local hudEditModeActionEventId = nil   -- NEW for F8
 
 local function npcInteractActionCallback(self, actionName, inputValue, callbackState, isAnalog)
     if inputValue <= 0 then
@@ -386,6 +394,31 @@ local function npcListActionCallback(actionName, inputValue, callbackState, isAn
     end
 end
 
+-- Right-click: Toggle HUD Edit Mode (on foot only)
+local function hudEditModeActionCallback(actionName, inputValue, callbackState, isAnalog)
+    print("[NPC Favor] HUD edit callback fired — action=" .. tostring(actionName) .. " inputValue=" .. tostring(inputValue))
+    if not npcSystem or not npcSystem.favorHUD then
+        print("[NPC Favor] HUD edit blocked: npcSystem or favorHUD is nil")
+        return
+    end
+    -- Only allow when player is on foot (not in vehicle)
+    if g_localPlayer and g_localPlayer.getIsInVehicle and g_localPlayer:getIsInVehicle() then
+        print("[NPC Favor] HUD edit blocked: player is in vehicle")
+        return
+    end
+    -- Don't toggle if a dialog/GUI is open
+    if g_gui and g_gui:getIsGuiVisible() then
+        print("[NPC Favor] HUD edit blocked: GUI is visible")
+        return
+    end
+    if npcSystem.settings and npcSystem.settings.favorHudLocked then
+        print("[NPC Favor] HUD is locked — unlock in ESC > Settings to reposition")
+        return
+    end
+    print("[NPC Favor] HUD edit: toggling edit mode")
+    npcSystem.favorHUD:toggleEditMode()
+end
+
 local function hookNPCInteractInput()
     if npcInteractOriginalFunc ~= nil then
         return -- Already hooked
@@ -460,6 +493,28 @@ local function hookNPCInteractInput()
                     g_inputBinding:setActionEventText(eventId, g_i18n:getText("input_NPC_LIST") or "NPC List")
                 end
             end
+
+            -- Register Right-click: HUD Edit Mode
+            local hudEditActionId = InputAction.HUD_EDIT_MODE
+            if hudEditActionId ~= nil then
+                print("[NPC Favor] Registering HUD_EDIT_MODE action event...")
+                local success, eventId = g_inputBinding:registerActionEvent(
+                    hudEditActionId,
+                    NPCSystem,
+                    hudEditModeActionCallback,
+                    false, true, false, false, nil, false
+                )
+                if success and eventId ~= nil then
+                    hudEditModeActionEventId = eventId
+                    g_inputBinding:setActionEventTextPriority(eventId, GS_PRIO_NORMAL)
+                    g_inputBinding:setActionEventText(eventId, g_i18n:getText("input_HUD_EDIT_MODE") or "Toggle HUD Edit")
+                    print("[NPC Favor] HUD_EDIT_MODE registered OK, eventId=" .. tostring(eventId))
+                else
+                    print("[NPC Favor] HUD_EDIT_MODE registration FAILED: success=" .. tostring(success) .. " eventId=" .. tostring(eventId))
+                end
+            else
+                print("[NPC Favor] HUD_EDIT_MODE action not found in InputAction table")
+            end
     end
 
 end
@@ -501,6 +556,13 @@ if FSBaseMission and FSBaseMission.update then
             g_inputBinding:setActionEventActive(npcInteractActionEventId, shouldShow)
             if shouldShow then
                 g_inputBinding:setActionEventText(npcInteractActionEventId, promptText)
+            end
+        end
+
+        -- Auto-exit HUD edit mode if player enters a vehicle
+        if npcSystem.favorHUD and npcSystem.favorHUD.editMode then
+            if g_localPlayer and g_localPlayer.getIsInVehicle and g_localPlayer:getIsInVehicle() then
+                npcSystem.favorHUD:exitEditMode()
             end
         end
     end)
@@ -620,6 +682,41 @@ addModEventListener({
             npcSystem:onMissionLoaded()
         else
             print("[NPC Favor] npcSystem is nil in onSavegameLoaded")
+        end
+    end,
+    mouseEvent = function(self, posX, posY, isDown, isUp, button)
+        -- Guard helper: any GUI overlay or dialog is open
+        local isGuiOpen = g_gui and (g_gui:getIsGuiVisible() or g_gui:getIsDialogVisible())
+
+        -- Right-click toggle: bypass action event system, detect raw input
+        -- FS25 mouseEvent button numbers: 1=left, 3=right, 2=middle
+        if isDown and button == 3 then
+            if npcSystem and npcSystem.favorHUD then
+                -- Guard: not in vehicle
+                if g_localPlayer and g_localPlayer.getIsInVehicle and g_localPlayer:getIsInVehicle() then
+                    return
+                end
+                -- Guard: no GUI/dialog/popup open
+                if isGuiOpen then
+                    return
+                end
+                -- Guard: HUD not locked
+                if npcSystem.settings and npcSystem.settings.favorHudLocked then
+                    return
+                end
+                print("[NPC Favor] Right-click toggle via mouseEvent — editMode=" .. tostring(npcSystem.favorHUD.editMode))
+                npcSystem.favorHUD:toggleEditMode()
+                return
+            end
+        end
+
+        -- Pass mouse events to HUD when in edit mode (for drag/resize)
+        -- Don't intercept if a dialog/popup opened on top of edit mode
+        if npcSystem and npcSystem.favorHUD and npcSystem.favorHUD.editMode and not isGuiOpen then
+            if isDown or isUp then
+                print(string.format("[NPC Favor] mouseEvent: btn=%d down=%s up=%s pos=%.3f,%.3f", button, tostring(isDown), tostring(isUp), posX, posY))
+            end
+            npcSystem.favorHUD:mouseEvent(posX, posY, isDown, isUp, button)
         end
     end
 })
