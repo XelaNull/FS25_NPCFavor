@@ -373,7 +373,11 @@ local function npcInteractActionCallback(self, actionName, inputValue, callbackS
 end
 
 -- F6: Open Favor Management
-local function favorMenuActionCallback(actionName, inputValue, callbackState, isAnalog)
+local function favorMenuActionCallback(self, actionName, inputValue, callbackState, isAnalog)
+    if inputValue <= 0 then
+        return
+    end
+
     if npcSystem and npcSystem.isInitialized then
         if DialogLoader and DialogLoader.show then
             DialogLoader.show("NPCFavorManagementDialog", "setNPCSystem", npcSystem)
@@ -384,7 +388,11 @@ local function favorMenuActionCallback(actionName, inputValue, callbackState, is
 end
 
 -- F7: Open NPC List
-local function npcListActionCallback(actionName, inputValue, callbackState, isAnalog)
+local function npcListActionCallback(self, actionName, inputValue, callbackState, isAnalog)
+    if inputValue <= 0 then
+        return
+    end
+
     if npcSystem and npcSystem.isInitialized then
         if DialogLoader and DialogLoader.show then
             DialogLoader.show("NPCListDialog", "setNPCSystem", npcSystem)
@@ -467,6 +475,7 @@ local function hookNPCInteractInput()
                 )
                 if success and eventId ~= nil then
                     favorMenuActionEventId = eventId
+                    g_inputBinding:setActionEventActive(eventId, true)
                     g_inputBinding:setActionEventTextPriority(eventId, GS_PRIO_NORMAL)
                     g_inputBinding:setActionEventText(eventId, g_i18n:getText("input_FAVOR_MENU") or "Favor Menu")
                 end
@@ -483,6 +492,7 @@ local function hookNPCInteractInput()
                 )
                 if success and eventId ~= nil then
                     npcListActionEventId = eventId
+                    g_inputBinding:setActionEventActive(eventId, true)
                     g_inputBinding:setActionEventTextPriority(eventId, GS_PRIO_NORMAL)
                     g_inputBinding:setActionEventText(eventId, g_i18n:getText("input_NPC_LIST") or "NPC List")
                 end
